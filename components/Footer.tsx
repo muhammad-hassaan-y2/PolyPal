@@ -17,7 +17,7 @@ export default function Footer() {
             <h3 className="text-sm font-semibold uppercase tracking-wider">Resources</h3>
             <ul className="mt-4 space-y-4">
               <li><Link href="#" className="text-gray-300 hover:text-white">Help Center</Link></li>
-              <li><Link href="#" className="text-gray-300 hover:text-white">Parent's Guide</Link></li>
+              <li><Link href="#" className="text-gray-300 hover:text-white">Parents Guide</Link></li>
               <li><Link href="#" className="text-gray-300 hover:text-white">Educational Resources</Link></li>
             </ul>
           </div>
