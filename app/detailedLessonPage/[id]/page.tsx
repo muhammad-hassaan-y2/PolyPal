@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Navbar from "@/components/Navbar"
+import ReactMarkdown from 'react-markdown';
 import { text } from 'stream/consumers';
 
 const fetchAI = async (topic) => {
@@ -43,7 +44,7 @@ export default function DetailedLessonPage({params}) {
         <div>
         <Navbar />
         <h1>AI Feature</h1>
-        <p>{JSON.stringify(aiOutput, null, 2)}</p>
+        <ReactMarkdown>{aiOutput}</ReactMarkdown>
         </div>
     )
 }
