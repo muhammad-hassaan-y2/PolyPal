@@ -6,7 +6,7 @@ export default function LessonPage() {
     return (
         <div>
         <Navbar />
-        <Link href="/detailedLessonPage/1">
+        <Link href={{ pathname: "/detailedLessonPage/BeginnerFoods"}}>
         <Card className="m-4">
             <CardHeader>
                 <CardTitle>Beginner</CardTitle>

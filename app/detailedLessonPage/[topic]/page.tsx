@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import Navbar from "@/components/Navbar"
 import ReactMarkdown from 'react-markdown';
-import { text } from 'stream/consumers';
+import { useParams } from 'next/navigation';
 
 const fetchAI = async (topic) => {
     try {
@@ -12,7 +12,7 @@ const fetchAI = async (topic) => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                inputText: "teach me chinese"
+                inputText: `Please focus on ${topic} topics when teaching Chinese.`
             })
         });        
         const data = await res.json()
@@ -22,9 +22,12 @@ const fetchAI = async (topic) => {
     }
 }
 
-export default function DetailedLessonPage({params}) {
-    const {topic} = params;
+export default function DetailedLessonPage() {
+    const params = useParams();
+    // Access 'topic' from the URL query string, ex href="/detailedLessonPage/BeginnerFoods"
+    const topic = params?.topic; 
     const [aiOutput, setAiOutput] = useState("Waiting for your language partner");
+    console.log(topic);
     // const aiOutput = fetchAI(topic);
     useEffect(() => {
         async function getAIOutput() {
