@@ -1,5 +1,6 @@
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
+import Link from "next/link";
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { BookOpen, Rocket, Shield } from 'lucide-react'
@@ -20,9 +21,11 @@ export default function Home() {
                 Join StoryQuest Kids and explore enchanting tales filled with wonder and excitement.
               </p>
               <div className="mt-8">
+                <Link href="/lessonPage">
                 <Button size="lg" className="text-lg">
                   Start Your Adventure
                 </Button>
+                </Link>
               </div>
             </div>
             <div className="md:w-1/2">
