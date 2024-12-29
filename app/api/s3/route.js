@@ -1,5 +1,5 @@
 import { config as dotenvConfig } from "dotenv";
-import { S3Client, ListBucketsCommand, PutObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, ListBucketsCommand } from "@aws-sdk/client-s3";
 import { NextResponse } from 'next/server';
 
 // Load environment variables from .env file
@@ -17,10 +17,10 @@ export async function POST(res) {
   try {
     const listBucketsCommand = new ListBucketsCommand({});
     res = await client.send(listBucketsCommand);
-    console.log(res)
-    const bucketNames = response.Buckets.map((bucket) => bucket.Name);
-    return NextResponse.json(bucketNames, { status: 200 });
+    //console.log(res)
+    // only displays the first bucket name for now
+    return NextResponse.json({ bucketsName: res.Buckets[0].Name}, { status: 200 });
   } catch (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
