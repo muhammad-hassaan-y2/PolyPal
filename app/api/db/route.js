@@ -18,9 +18,6 @@ export async function POST(res) {
         const listTablesCommand = new ListTablesCommand({});
         res = await client.send(listTablesCommand);
         return NextResponse.json(res.TableNames, { status: 200 });
-
-        // console.log({ tables: res.TableNames });
-        // return res.TableNames;
     } catch (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
