@@ -1,0 +1,40 @@
+import { config as dotenvConfig } from "dotenv";
+import { DynamoDBClient, ListTablesCommand, ScanCommand} from "@aws-sdk/client-dynamodb";
+import { NextResponse } from 'next/server';
+
+// Load environment variables from .env file
+dotenvConfig();
+
+const client = new DynamoDBClient({
+    region: process.env.AWS_REGION,
+    credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID_dynamo,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY_dynamo
+    }
+});
+
+// get all elements from the inventory
+export async function GET() {
+    const tableName = "StoreItems";
+    try {
+        const scanCommand = new ScanCommand({
+            TableName: tableName,
+        });
+        const response = await client.send(scanCommand);
+
+        return NextResponse.json(response.Items, { status: 200 });
+    } catch (error) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+}
+
+export async function POST(res) {
+    try {
+        const listTablesCommand = new ListTablesCommand({});
+        res = await client.send(listTablesCommand);
+        return NextResponse.json(res.TableNames, { status: 200 });
+    } catch (error) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+}
+
