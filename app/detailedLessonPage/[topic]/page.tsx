@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import Navbar from "@/components/Navbar"
 import ReactMarkdown from 'react-markdown';
 import { useParams } from 'next/navigation';
+import Notes from "@/components/Notes";
 
 const fetchAI = async (topic) => {
     try {
@@ -46,6 +47,7 @@ export default function DetailedLessonPage() {
     return (
         <div>
         <Navbar />
+        <Notes />
         <h1>AI Feature</h1>
         <ReactMarkdown>{aiOutput}</ReactMarkdown>
         </div>
