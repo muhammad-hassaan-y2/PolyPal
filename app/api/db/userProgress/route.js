@@ -2,6 +2,7 @@ import { config as dotenvConfig } from "dotenv";
 import { DynamoDBClient, ListTablesCommand, ScanCommand} from "@aws-sdk/client-dynamodb";
 import { NextResponse } from 'next/server';
 
+// anyone can modify this, api not being called by any file right now
 // Load environment variables from .env file
 dotenvConfig();
 
