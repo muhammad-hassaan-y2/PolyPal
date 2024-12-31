@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-import { Card, CardTitle, CardHeader, CardDescription } from "@/components/ui/card";
+import { Card, CardTitle, CardHeader, CardDescription, CardImage } from "@/components/ui/card";
 
 interface ShopItem {
     itemId: number;
@@ -42,7 +42,7 @@ export default function ShopContainer() {
     useEffect(() => {
         async function getShopItems() {
             const data = await fetchShopItems();
-            console.log("useEffect");
+            console.log("useEffect", data);
             setShopItems(data);
         }
         getShopItems();
@@ -54,7 +54,7 @@ export default function ShopContainer() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {shopItems.map((item, index) => (
                     <Card key={index} className="m-4">
-                        {/* <CardImage src={item.imageUrl} alt={item.name} /> */}
+                        <CardImage src={item.imageUrl} alt={item.name} width={500} height={500} />
                         <CardHeader>
                             <CardTitle>{item.name}</CardTitle>
                             <CardDescription>Price: ${item.price}</CardDescription>
