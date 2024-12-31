@@ -21,7 +21,6 @@ const fetchShopItems = async () => {
             }
         });
         const data = await res.json()
-        console.log("data retrieved", data);
 
         // Map the DynamoDB format to a simpler structure
         return data.map((item: any) => ({
@@ -42,7 +41,6 @@ export default function ShopContainer() {
     useEffect(() => {
         async function getShopItems() {
             const data = await fetchShopItems();
-            console.log("useEffect", data);
             setShopItems(data);
         }
         getShopItems();

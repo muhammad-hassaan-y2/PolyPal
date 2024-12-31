@@ -34,7 +34,6 @@ export async function GET() {
         const response = await client.send(scanCommand);
         // make a signed url for each item
         for (const item of response.Items) {
-            console.log(item);
             const getObjectParams = {
                 Bucket: process.env.BUCKET_NAME,
                 // grab the "string" of s3Key
@@ -44,7 +43,6 @@ export async function GET() {
             const url = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
             item.imageUrl.S = url;
         }
-        console.log(response.Items);
         return NextResponse.json(response.Items, { status: 200 });
     } catch (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });
