@@ -50,18 +50,19 @@ export default function ShopContainer() {
 
     return (
         <div>
-        <h1>Shop Items</h1>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {shopItems.map((item, index) => (
-                    <Card key={index} className="m-4">
-                        <CardImage src={item.imageUrl} alt={item.name} width={500} height={500} />
-                        <CardHeader>
-                            <CardTitle>{item.name}</CardTitle>
-                            <CardDescription>Price: ${item.price}</CardDescription>
-                        </CardHeader>
-                    </Card>
-                ))}
-            </div>
+            <h1>Shop Items</h1>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {shopItems.map((item, index) => (
+                        <Card key={index} className="m-4">
+                            <CardImage src={item.imageUrl} alt={item.name} width={100} height={100} />
+                            <CardHeader>
+                                <CardTitle>{item.name}</CardTitle>
+                                <CardDescription>Price: ${item.price}</CardDescription>
+                            </CardHeader>
+                        </Card>
+                    ))}
+                </div>
+
         </div>
     )
 }
