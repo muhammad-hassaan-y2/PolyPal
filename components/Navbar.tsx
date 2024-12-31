@@ -19,8 +19,8 @@ export default function Navbar() {
             </Link>
           </div>
           <div className="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-8">
-            <Link href="#features" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-              Features
+            <Link href="/shopPage" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
+              Shop
             </Link>
             <Link href="#stories" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
               Stories
