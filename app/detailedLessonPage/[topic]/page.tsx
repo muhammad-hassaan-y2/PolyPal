@@ -1,55 +1,57 @@
-'use client';
-import { useEffect, useState } from 'react';
-import Navbar from "@/components/Navbar"
-import ReactMarkdown from 'react-markdown';
-import { useParams } from 'next/navigation';
-import Notes from "@/components/Notes";
+'use client'
 
-const fetchAI = async (topic) => {
+import { useEffect, useState } from 'react'
+import Navbar from "@/components/Navbar"
+import { useParams } from 'next/navigation'
+import Notes from "@/components/Notes"
+import { ChatInterface } from '@/components/chat/ChatInterface'
+
+const fetchAI = async (topic: string) => {
     try {
-        const res = await fetch(`http://localhost:3000/api/ai`, {
+        const res = await fetch(`/api/ai`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                inputText: `Please focus on ${topic} topics when teaching Chinese.`
-            })
-        });        
+                inputText: `Please focus on ${topic} topics when teaching Chinese.`,
+            }),
+        })
         const data = await res.json()
         return data
-    } catch(error) {
-        console.error("Error loading ai", error);
+    } catch (error) {
+        console.error("Error loading AI", error)
     }
 }
 
 export default function DetailedLessonPage() {
-    const params = useParams();
-    // Access 'topic' from the URL query string, ex href="/detailedLessonPage/BeginnerFoods"
-    const topic = params?.topic; 
-    const [aiOutput, setAiOutput] = useState("Waiting for your language partner");
-    console.log(topic);
-    // const aiOutput = fetchAI(topic);
+    const params = useParams()
+    const topic = params?.topic as string
+    const [aiOutput, setAiOutput] = useState("Waiting for your language partner")
+
     useEffect(() => {
         async function getAIOutput() {
-            const data = await fetchAI(topic);
+            const data = await fetchAI(topic)
             if (data && data.output && data.output.message && data.output.message.content) {
-                const textOutput = data.output.message.content.map(item => item.text).join("\n\n");
-                setAiOutput(textOutput);
+                const textOutput = data.output.message.content.map((item: { text: string }) => item.text).join("\n\n")
+                setAiOutput(textOutput)
             } else {
-                setAiOutput("No output received from AI.");
+                setAiOutput("No output received from AI.")
             }
         }
-        getAIOutput();
-        console.log(aiOutput);
-    }, [topic]);
+        getAIOutput()
+    }, [topic])
 
     return (
-        <div>
-        <Navbar />
-        <Notes />
-        <h1>AI Feature</h1>
-        <ReactMarkdown>{aiOutput}</ReactMarkdown>
+        <div className="min-h-screen flex flex-col bg-gradient-to-br from-pink-100 to-pink-200">
+            <Navbar />
+            <div className="flex-grow flex justify-center px-4 py-6">
+                <div className="w-full max-w-4xl">
+                    <ChatInterface topic={topic} />
+                </div>
+            </div>
+            <Notes />
         </div>
     )
 }
+
