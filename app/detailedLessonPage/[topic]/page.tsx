@@ -28,6 +28,11 @@ export default function DetailedLessonPage() {
     const params = useParams()
     const topic = params?.topic as string
     const [aiOutput, setAiOutput] = useState("Waiting for your language partner")
+    //this is just a placeholder value
+    const user = "user6"
+    const level = "beginner"
+    // const user = params?.user as string
+    // const level = params?.level as string
 
     useEffect(() => {
         async function getAIOutput() {
@@ -50,7 +55,13 @@ export default function DetailedLessonPage() {
                     <ChatInterface topic={topic} />
                 </div>
             </div>
-            <Notes />
+
+            <Notes 
+            user={user}
+            lvl={level}
+            topic={topic}
+            />
+
         </div>
     )
 }
