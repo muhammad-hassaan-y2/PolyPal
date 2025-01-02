@@ -23,7 +23,7 @@ export async function POST(request) {
 
         if (params.type == "update") {
             command = new UpdateCommand({
-                TableName: "TestingUsers2.0",
+                TableName: "NotesLevels",
                 Key: {
                     userId: params.user,
                     topic: params.topic
@@ -39,7 +39,7 @@ export async function POST(request) {
         }
         else if (params.type == "fetch") {
             command = new GetCommand({
-                TableName: "TestingUsers2.0",
+                TableName: "NotesLevels",
                 Key: {
                     userId: params.user,
                     topic: params.topic
