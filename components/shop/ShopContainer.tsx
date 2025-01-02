@@ -15,7 +15,7 @@ interface ShopItem {
 
 const fetchShopItems = async () => {
     try {
-        const res = await fetch(`http://localhost:3000/api/db/inventory`, {
+        const res = await fetch(`/api/db/inventory`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
