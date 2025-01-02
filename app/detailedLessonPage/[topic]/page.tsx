@@ -10,6 +10,9 @@ export default function DetailedLessonPage() {
     const params = useParams()
     const topicParam = params?.topic as string
     const [topic, setTopic] = useState("")
+    //this is just a placeholder value
+    const user = "user9"
+    const level = "beginner"
 
     useEffect(() => {
         // Parse the topic from the URL parameter
@@ -32,7 +35,13 @@ export default function DetailedLessonPage() {
                     <ChatInterface topic={topic} />
                 </div>
             </div>
-            <Notes />
+
+            <Notes 
+            user={user}
+            lvl={level}
+            topic={topic}
+            />
+
         </div>
     )
 }
