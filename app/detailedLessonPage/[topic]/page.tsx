@@ -29,7 +29,7 @@ export default function DetailedLessonPage() {
     const topic = params?.topic as string
     const [aiOutput, setAiOutput] = useState("Waiting for your language partner")
     //this is just a placeholder value
-    const user = "user6"
+    const user = "user9"
     const level = "beginner"
     // const user = params?.user as string
     // const level = params?.level as string

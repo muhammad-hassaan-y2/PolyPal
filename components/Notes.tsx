@@ -5,22 +5,6 @@ import Image from 'next/image'
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { X } from 'lucide-react'
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb"
-import { UpdateCommand, GetCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb"
-import { config as dotenvConfig } from "dotenv";
-
-dotenvConfig();
-
-// connect to client by input the access key id and secret access key id using a file
-const client = new DynamoDBClient({
-    region: process.env.AWS_REGION,
-    credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID_dynamo,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY_dynamo
-    }
-});
-
-const docClient = DynamoDBDocumentClient.from(client)
 
 interface NotesProps {
     user: string;
@@ -37,22 +21,20 @@ export default function Notes({ user, lvl, topic }: NotesProps) {
     //update the db 
     const saveNoteToDynamoDB = async () => {
         const currentDate = new Date()
-        const command = new UpdateCommand({
-            TableName: "TestingUsers2.0",
-            Key: {
-                userId: user,
-                topic: topic
+        const response = await fetch(`/api/db/notesLevels`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
             },
-            UpdateExpression: "SET noteContent = :noteContent, lvl = :lvl, updatedAt = :updatedAt",
-            ExpressionAttributeValues: {
-                ":noteContent": noteContent,
-                ":lvl": lvl,
-                ":updatedAt": currentDate.toISOString()
-            },
-            ReturnValues: "ALL_NEW"
-        });
-
-        const response = await docClient.send(command)
+            body: JSON.stringify({
+                type: "update",
+                user: user,
+                topic: topic,
+                noteContent: noteContent,
+                lvl: lvl,
+                currentDate: currentDate.toISOString(),
+            }),
+        })
         setLastSaved(currentDate.toLocaleString())
         return response
     }
@@ -60,25 +42,28 @@ export default function Notes({ user, lvl, topic }: NotesProps) {
     //gets the stuff from the db to show on the notes page
     const fetchNotes = async () => {
         setIsLoading(true)
-        const command = new GetCommand({
-            TableName: "TestingUsers2.0",
-            Key: {
-                userId: user,
-                topic: topic
-            }
+        const response = await fetch(`/api/db/notesLevels`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                type: "fetch",
+                user: user,
+                topic: topic,
+            }),
         })
-
-        const response = await docClient.send(command)
-        if (response.Item) {
+        const data = await response.json()
+        if (data.Item) {
             //get the note content if available otherwise the notes is just empty
-            setNoteContent(response.Item.noteContent || '')
-            if (response.Item.updatedAt) {
-                setLastSaved(new Date(response.Item.updatedAt).toLocaleString())
+            setNoteContent(data.Item.noteContent || '')
+            if (data.Item.updatedAt) {
+                setLastSaved(new Date(data.Item.updatedAt).toLocaleString())
             }
         }
         setIsLoading(false)
+        return response
     }
-
 
     useEffect(() => {
         if (isNotesOpen) {
