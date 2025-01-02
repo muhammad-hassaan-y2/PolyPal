@@ -19,6 +19,8 @@ export function ChatInterface({ topic }: ChatInterfaceProps) {
     const [messages, setMessages] = useState<Message[]>([])
     const [input, setInput] = useState('')
     const [isLoading, setIsLoading] = useState(false)
+    const [userMessageCount, setUserMessageCount] = useState(0);
+    const messagesPerReward = 10;
 
     useEffect(() => {
         setMessages([])
@@ -67,6 +69,8 @@ export function ChatInterface({ topic }: ChatInterfaceProps) {
                 role: 'assistant',
             }
 
+            setUserMessageCount(userMessageCount + 1);
+
             setMessages((prev) => [...prev, assistantMessage])
         } catch (error) {
             console.error('Error:', error)
@@ -78,6 +82,24 @@ export function ChatInterface({ topic }: ChatInterfaceProps) {
             setMessages((prev) => [...prev, errorMessage])
         } finally {
             setIsLoading(false)
+        }
+
+        try {
+            if ((userMessageCount % messagesPerReward) == 0) {
+                const response = await fetch('/api/db/userProgress/points', {
+                    method: 'PATCH',
+                    body: JSON.stringify({ userId: 1, quantity: 10 }),
+                });
+            }
+        }
+        catch (error) {
+            console.error('Error:', error);
+            const errorMessage: Message = {
+                id: (Date.now() + 1).toString(),
+                content: "I'm sorry, there was an error updating points.",
+                role: 'assistant',
+            };
+            setMessages((prev) => [...prev, errorMessage]);
         }
     }
 
