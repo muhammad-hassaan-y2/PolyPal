@@ -86,10 +86,10 @@ export function ChatInterface({ topic }: ChatInterfaceProps) {
 
         try {
             if ((userMessageCount % messagesPerReward) == 0) {
-                const response = await fetch('/api/db/userProgress/points', {
-                    method: 'PATCH',
-                    body: JSON.stringify({ userId: 1, quantity: 10 }),
-                });
+                // const response = await fetch('/api/db/userProgress/points', {
+                //     method: 'PATCH',
+                //     body: JSON.stringify({ userId: 1, quantity: 10 }),
+                // });
             }
         }
         catch (error) {

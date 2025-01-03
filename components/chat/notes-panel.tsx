@@ -22,9 +22,9 @@ export function NotesPanel({ isOpen, onToggle }: NotesPanelProps) {
           </Button>
         </div>
         <p className="text-sm text-pink-700">
-          This is some notes. The user's notes associated with this lesson. This is some notes.
-          The user's notes associated with this lesson. This is some notes.
-          The user's notes associated with this lesson.
+          This is some notes. The user&apos;s notes associated with this lesson. This is some notes.
+          The user&apos;s notes associated with this lesson. This is some notes.
+          The user&apos;s notes associated with this lesson.
         </p>
       </div>
     </div>
