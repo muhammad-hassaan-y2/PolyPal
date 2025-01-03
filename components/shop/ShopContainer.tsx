@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -14,7 +16,7 @@ interface ShopItem {
 
 const fetchShopItems = async () => {
     try {
-        const res = await fetch(`http://localhost:3000/api/db/inventory`, {
+        const res = await fetch(`/api/db/inventory`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
