@@ -90,6 +90,7 @@ export function ChatInterface({ topic }: ChatInterfaceProps) {
                     method: 'PATCH',
                     body: JSON.stringify({ userId: 1, quantity: 10 }),
                 });
+                console.log('Points updated successfully:', await response.json());                
             }
         }
         catch (error) {
