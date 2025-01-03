@@ -15,7 +15,7 @@ export default function Navbar() {
   ]
 
   return (
-    <nav className="p-4 flex justify-between items-center bg-[#FFFBE8]">
+    <nav className="p-4 flex justify-between items-center bg-[#FFFBE8] font-work-sans">
       <div className="flex gap-4">
         {navItems.map((item) => (
           <Link

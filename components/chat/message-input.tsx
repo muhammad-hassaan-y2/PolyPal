@@ -11,16 +11,16 @@ interface MessageInputProps {
 
 export function MessageInput({ input, isLoading, onSubmit, onInputChange }: MessageInputProps) {
   return (
-    <form onSubmit={onSubmit} className="flex items-center space-x-2 p-4 border-t border-pink-200">
+    <form onSubmit={onSubmit} className="flex items-center space-x-2 p-4 border-t">
       <Input
         value={input}
         onChange={onInputChange}
         placeholder="Type a message..."
         disabled={isLoading}
-        className="flex-1 bg-pink-50 border-pink-200 text-pink-900 placeholder:text-pink-400"
+        className="flex-1 bg-orange-100 border-[#594F43] text-orange-500 placeholder:text-orange-500"
       />
 
-      <Button type="submit" size="icon" disabled={isLoading} className="bg-pink-500 hover:bg-pink-600 text-white">
+      <Button type="submit" size="icon" disabled={isLoading} className="bg-orange-400 hover:bg-orange-500 text-white">
         <Send className="h-4 w-4" />
 
         <span className="sr-only">Send message</span>
