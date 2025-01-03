@@ -104,16 +104,16 @@ export function ChatInterface({ topic }: ChatInterfaceProps) {
     }
 
     return (
-        <Card className="flex flex-col h-[calc(100vh-140px)] bg-white/80 backdrop-blur-sm border-pink-200">
+        <Card className="flex flex-col h-[calc(100vh-140px)] bg-white/80 backdrop-blur-sm border-[#594F43]">
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {messages.map((message) => (
                     <MessageBubble key={message.id} content={message.content} role={message.role} />
                 ))}
                 {isLoading && (
                     <div className="flex items-center space-x-2">
-                        <div className="animate-pulse h-2 w-2 rounded-full bg-pink-400" />
-                        <div className="animate-pulse h-2 w-2 rounded-full bg-pink-400 animation-delay-200" />
-                        <div className="animate-pulse h-2 w-2 rounded-full bg-pink-400 animation-delay-400" />
+                        <div className="animate-pulse h-2 w-2 rounded-full bg-[#FF9000]" />
+                        <div className="animate-pulse h-2 w-2 rounded-full bg-[#FF9000] animation-delay-200" />
+                        <div className="animate-pulse h-2 w-2 rounded-full bg-[#FF9000] animation-delay-400" />
                     </div>
                 )}
             </div>

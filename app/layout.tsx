@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Azeret_Mono as Geist_Mono } from 'next/font/google';
+import { Eczar } from 'next/font/google';
+import { Work_Sans } from 'next/font/google';
 import "./globals.css";
 
 const geistSans = Geist({
@@ -12,9 +14,19 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const eczar = Eczar({
+  subsets: ["latin"],
+  variable: "--font-eczar",
+});
+
+const workSans = Work_Sans({
+  subsets: ['latin'],
+  variable: '--font-work-sans',
+});
+
 export const metadata: Metadata = {
-  title: "Story Game",
-  description: "Story Game",
+  title: "PolyPal",
+  description: "Interactive Learning Adventure",
 };
 
 export default function RootLayout({
@@ -25,10 +37,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${eczar.variable} ${workSans.variable} antialiased`}
       >
         {children}
       </body>
     </html>
   );
 }
+

@@ -1,37 +1,50 @@
 "use client"
+
 import Link from 'next/link'
-import { useState } from 'react'
-import { Button } from "@/components/ui/button"
-import { BookOpen } from 'lucide-react'
-import AuthModal from './AuthModal'
+import { usePathname } from 'next/navigation'
 
 export default function Navbar() {
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
+  const pathname = usePathname()
+
+  const navItems = [
+    { name: 'Home', path: '/' },
+    { name: 'Languages', path: '/languages' },
+    { name: 'Levels', path: '/levels' },
+    { name: 'About', path: '/about' },
+    { name: 'Store', path: '/shopPage' },
+  ]
 
   return (
-    <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex-shrink-0 flex items-center">
-            <Link href="/" className="flex items-center space-x-2">
-              <BookOpen className="h-8 w-8 text-primary" />
-              <span className="text-2xl font-bold bg-gradient-to-r from-primary to-primary-foreground text-transparent bg-clip-text">StoryQuest Kids</span>
-            </Link>
-          </div>
-          <div className="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-8">
-            <Link href="/shopPage" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-              Shop
-            </Link>
-            <Link href="#stories" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-              Stories
-            </Link>
-            <Button onClick={() => setIsAuthModalOpen(true)} variant="default">
-              Login / Sign Up
-            </Button>
-          </div>
-        </div>
+    <nav className="p-4 flex justify-between items-center bg-[#FFFBE8] font-work-sans">
+      <div className="flex gap-4">
+        {navItems.map((item) => (
+          <Link
+            key={item.name}
+            href={item.path}
+            className={`px-4 py-2 font-bold hover:scale-110 transition-transform ${
+              pathname === item.path
+                ? "bg-[#FF9000] text-white rounded-full"
+                : "text-black"
+            }`}
+          >
+            {item.name}
+          </Link>
+        ))}
       </div>
-      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
+      <button className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          className="w-5 h-5 text-gray-600"
+        >
+          <path
+            fillRule="evenodd"
+            d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z"
+            clipRule="evenodd"
+          />
+        </svg>
+      </button>
     </nav>
   )
 }
