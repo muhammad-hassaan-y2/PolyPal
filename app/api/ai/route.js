@@ -5,16 +5,14 @@ import { NextResponse } from 'next/server';
 dotenvConfig();
 
 const client = new BedrockRuntimeClient({
-  region: process.env.REGION,
+  region: process.env.AWS_REGION,
   credentials: {
-    accessKeyId: process.env.ACCESS_KEY_ID_bedrock,
-    secretAccessKey: process.env.SECRET_ACCESS_KEY_bedrock,
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   },
 });
 
 export async function POST(req) {
-  const origin = req.headers.get("origin");
-
   try {
     const body = await req.json();
     const { inputText, topic, systemMessage } = body;
@@ -49,12 +47,7 @@ export async function POST(req) {
 
     console.log("Bedrock Response:", completion);
 
-    return NextResponse.json({ message: assistantContent }, {
-      headers: {
-        "Access-Control-Allow-Origin": origin,
-        "content-type": "application/json",
-      }
-    });
+    return NextResponse.json({ message: assistantContent }, { status: 200 });
   } catch (error) {
     console.error("Error invoking the model:", error);
     return NextResponse.json({ 
@@ -63,4 +56,3 @@ export async function POST(req) {
     }, { status: 500 });
   }
 }
-
