@@ -73,9 +73,9 @@ export default function Notes({ user, lvl, topic }: NotesProps) {
 
     if (isNotesOpen) {
         return (
-            <Card className="fixed right-0 top-[65px] w-[400px] h-[calc(100vh-65px)] flex flex-col shadow-lg z-50 bg-white/95 backdrop-blur-sm">
+            <Card className="fixed right-0 top-[65px] w-[400px] h-[calc(100vh-140px)] flex flex-col shadow-lg z-50 bg-white/95 backdrop-blur-sm rounded-[15px]">
                 <div className="flex items-center justify-between p-4 border-b">
-                <h2 className="text-lg font-semibold">Notes</h2>
+                <h2 className="text-lg font-semibold">Save Your Notes Here!</h2>
                 <Button
                 variant="ghost"
                 size="icon"
@@ -93,7 +93,7 @@ export default function Notes({ user, lvl, topic }: NotesProps) {
                     <textarea
                         value={noteContent}
                         onChange={(e) => setNoteContent(e.target.value)}
-                        className="flex-1 w-full p-4 bg-transparent border-0 resize-none focus:outline-none"
+                        className="flex-1 w-full p-4 bg-transparent border-0 resize-none focus:outline-none h-[calc(100%-110px)]"
                         placeholder="Write your notes here..."
                     />
                 )}
@@ -128,3 +128,4 @@ export default function Notes({ user, lvl, topic }: NotesProps) {
         </Button>
     )
 }
+
