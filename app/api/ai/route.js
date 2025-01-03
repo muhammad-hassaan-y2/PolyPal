@@ -13,6 +13,8 @@ const client = new BedrockRuntimeClient({
 });
 
 export async function POST(req) {
+  const origin = req.headers.get("origin");
+
   try {
     const body = await req.json();
     const { inputText, topic, systemMessage } = body;
@@ -47,7 +49,12 @@ export async function POST(req) {
 
     console.log("Bedrock Response:", completion);
 
-    return NextResponse.json({ message: assistantContent }, { status: 200 });
+    return NextResponse.json({ message: assistantContent }, {
+      headers: {
+        "Access-Control-Allow-Origin": origin,
+        "content-type": "application/json",
+      }
+    });
   } catch (error) {
     console.error("Error invoking the model:", error);
     return NextResponse.json({ 
