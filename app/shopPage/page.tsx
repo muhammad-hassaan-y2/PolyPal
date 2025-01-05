@@ -76,7 +76,7 @@ const ShopPage = () => {
                 {/* </div> */}
             </div>
             <div className="w-1/2">
-                {/* <ShopContainer /> */}
+                <ShopContainer />
                 
             </div>
         </div>
