@@ -13,7 +13,7 @@ const client = new DynamoDBClient({
     }
 });
 
-export async function GET(req) {
+export async function GET() {
     const tableName = "UserProgress"
     try {
         const getPoints = new GetItemCommand({
@@ -36,18 +36,24 @@ export async function PATCH(req) {
     const { quantity } = body
 
     try {
+        // if q is greater than points, then return an error
         const rewardPoints = new UpdateItemCommand({
             TableName: tableName,
             Key: { "userId": { "S": `${userId}` } },
-            UpdateExpression: "ADD points :q",
-            ConditionExpression: "points - :q > 0",
-            ExpressionAttributeValues: { ":q": { "N": `${quantity}` } },
+            UpdateExpression: "SET points = points + :q",
+            ConditionExpression: ":q > points",
+            ExpressionAttributeValues: { 
+                ":q": { "N": `${quantity}` },
+            },
             ReturnValues: "UPDATED_NEW"
         })
 
         const response = await client.send(rewardPoints);
         return NextResponse.json(response.Attributes, { status: 200 })
     } catch (error) {
+        if (error.name === 'ConditionalCheckFailedException') {
+            return NextResponse.json({ error: "The quantity made the sum negative" }, { status: 400 });
+        }
         return NextResponse.json({ error: error.message }, { status: 500 })
     }
 }

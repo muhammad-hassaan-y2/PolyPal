@@ -14,18 +14,22 @@ const client = new DynamoDBClient({
 });
 
 export async function PATCH(req) {
-    let tableName = "UserClothesInventory"
+    let tableName = "UserProgress"
 
     const body = await req.json() // Parse the incoming request body
     const { newItemId } = body
     const { newItemPrice } = body
 
     try{
-        const response = await fetch('/../../userProgress/points', {
+        const response = await fetch('http://localhost:3000/api/db/userProgress/points', {
             method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
             body: JSON.stringify({ userId: 1, quantity: newItemPrice }),
         });
         // IMPLEMENT: check if this returned any updated items. if it did not then the price could not be updated (failed conditional)
+        console.log(response)
     }
     catch (error){
         return NextResponse.json({ error: error.message }, { status: 500 })
@@ -39,22 +43,22 @@ export async function PATCH(req) {
             Key: { "userId": { "S": "1" } }
         })
 
-        const response = await client.send(getEquippedItem);
-        inventoryId = response.inventoryId
+        const response = await client.send(getUserInventory);
+        inventoryId = response.Item.inventoryId
     } catch (error) {
         // IMPLEMENT: reupdate points to original
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return NextResponse.json({ error: "failed to get inventory id", details: error.message }, { status: 500 });
     }
 
-    tableName = "UserClothesInventory"
+    tableName = "UserInventory"
 
     // Add to the inventory 
     try {
         const rewardPoints = new UpdateItemCommand({
             TableName: tableName,
-            Key: { "userId": { "S": "1" } },
-            UpdateExpression: "ADD :inventoryId :newItemId",
-            ExpressionAttributeValues: { ":inventoryId": inventoryId, ":newItemId": { "S": newItemId }},
+            Key: { "inventoryId": inventoryId },
+            UpdateExpression: "ADD shopItems :newItemId",
+            ExpressionAttributeValues: {":newItemId": { "NS": [`${newItemId}` ]}},
             ReturnValues: "ALL_NEW"
         })
 
@@ -63,6 +67,6 @@ export async function PATCH(req) {
         
     } catch (error) {
         // IMPLEMENT: reupdate points to original
-        return NextResponse.json({ error: error.message }, { status: 500 })
+        return NextResponse.json({ error: "error updating user inventory "+ error.message }, { status: 500 })
     }
 }
