@@ -10,9 +10,10 @@ interface NotesProps {
     user: string;
     lvl: string;
     topic: string;
+    language: string;
   }
 
-export default function Notes({ user, lvl, topic }: NotesProps) {
+export default function Notes({ user, lvl, topic, language }: NotesProps) {
     const [isNotesOpen, setIsNotesOpen] = useState(false)
     const [noteContent, setNoteContent] = useState('')
     const [lastSaved, setLastSaved] = useState<string | null>(null)
@@ -33,6 +34,7 @@ export default function Notes({ user, lvl, topic }: NotesProps) {
                 noteContent: noteContent,
                 lvl: lvl,
                 currentDate: currentDate.toISOString(),
+                lang: language
             }),
         })
         setLastSaved(currentDate.toLocaleString())
@@ -51,6 +53,7 @@ export default function Notes({ user, lvl, topic }: NotesProps) {
                 type: "fetch",
                 user: user,
                 topic: topic,
+                lang: language
             }),
         })
         const data = await response.json()
