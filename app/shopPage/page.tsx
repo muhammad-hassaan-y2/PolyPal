@@ -6,10 +6,7 @@ const ShopPage = () => {
     return (
         <div className="flex h-screen">
             <div className="w-1/2 flex items-center justify-center">
-                {/* Avatar or other content */}
-                {/* <div className="avatar-placeholder bg-gray-200 w-32 h-32 rounded-full flex items-center justify-center"> */}
-                    {/* <span>Avatar</span> */}
-                {/* placeholder for layering */}
+                {/* Avatar profile*/}
                 <div 
                 id="wholeAvatar"
                 style={{ 
@@ -77,7 +74,6 @@ const ShopPage = () => {
             </div>
             <div className="w-1/2">
                 <ShopContainer />
-                
             </div>
         </div>
     );
