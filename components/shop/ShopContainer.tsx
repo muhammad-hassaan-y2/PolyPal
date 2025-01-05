@@ -54,7 +54,9 @@ export default function ShopContainer() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {shopItems.map((item, index) => (
                         <Card key={index} className="m-4">
-                            <CardImage src={item.imageUrl} alt={item.name} width={100} height={100} />
+                            <div className="w-1/3 mx-auto">
+                                <CardImage src={item.imageUrl} alt={item.name} width={100} height={100} />
+                            </div>
                             <CardHeader>
                                 <CardTitle>{item.name}</CardTitle>
                                 <CardDescription>Price: ${item.price}</CardDescription>
