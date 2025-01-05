@@ -40,8 +40,9 @@ export async function PATCH(req) {
             TableName: tableName,
             Key: { "userId": { "S": `${userId}` } },
             UpdateExpression: "ADD points :q",
+            ConditionExpression: "points - :q > 0",
             ExpressionAttributeValues: { ":q": { "N": `${quantity}` } },
-            ReturnValues: "ALL_NEW"
+            ReturnValues: "UPDATED_NEW"
         })
 
         const response = await client.send(rewardPoints);
