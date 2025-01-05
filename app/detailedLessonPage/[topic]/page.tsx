@@ -11,6 +11,7 @@ export default function DetailedLessonPage() {
     const topicParam = params?.topic as string
     const [topic, setTopic] = useState("")
     //this is just a placeholder value
+    const language = "chinese"
     const user = "user9"
     const level = "beginner"
 
@@ -40,6 +41,7 @@ export default function DetailedLessonPage() {
             user={user}
             lvl={level}
             topic={topic}
+            language={language}
             />
 
         </div>

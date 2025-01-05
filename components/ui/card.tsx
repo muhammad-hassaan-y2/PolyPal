@@ -66,7 +66,7 @@ const CardImage = React.forwardRef<
   React.ComponentProps<typeof Image>
 >(({ className, ...props }, ref) => (
   <div ref={ref} className={cn("w-full h-auto rounded-t-xl", className)}>
-    <Image className="w-full h-auto rounded-t-xl" fill={false} {...props} />
+    <Image className="w-full h-auto rounded-t-xl" fill={false} quality={90} {...props} />
   </div>
 ));
 CardImage.displayName = "CardImage";

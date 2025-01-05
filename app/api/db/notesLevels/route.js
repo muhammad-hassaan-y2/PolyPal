@@ -20,13 +20,13 @@ export async function POST(request) {
     try {
         const params = await request.json();
         let command;
-
+        let totalTopic = params.topic + " and " + params.lang
         if (params.type == "update") {
             command = new UpdateCommand({
                 TableName: "NotesLevels",
                 Key: {
                     userId: params.user,
-                    topic: params.topic
+                    topic: totalTopic
                 },
                 UpdateExpression: "SET noteContent = :noteContent, lvl = :lvl, updatedAt = :updatedAt",
                 ExpressionAttributeValues: {
@@ -42,7 +42,7 @@ export async function POST(request) {
                 TableName: "NotesLevels",
                 Key: {
                     userId: params.user,
-                    topic: params.topic
+                    topic: totalTopic
                 }
             })
     
