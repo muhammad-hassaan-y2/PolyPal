@@ -53,7 +53,7 @@ export async function PATCH(req) {
         const response = await client.send(getUserInventory);
         inventoryId = response.Item.inventoryId
     } catch (error) {
-        const response = await fetch(URL + '/api/db/userProgress/points', {
+        await fetch(URL + '/api/db/userProgress/points', {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -80,7 +80,7 @@ export async function PATCH(req) {
         return NextResponse.json(response.Attributes, { status: 200 })
         
     } catch (error) {
-        const response = await fetch(URL + '/api/db/userProgress/points', {
+        await fetch(URL + '/api/db/userProgress/points', {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',

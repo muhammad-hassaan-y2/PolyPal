@@ -13,6 +13,8 @@ interface ShopItem {
     price: number;
     name: string;
     type: string;
+    equipped: boolean,
+    owned: boolean
 }
 
 const fetchShopItems = async () => {
@@ -42,12 +44,26 @@ const fetchShopItems = async () => {
 
 const buyItem = async (itemId: number, price: number) => {
     try {
-        const response = await fetch('/api/db/inventory/buyItem', {
+        await fetch('/api/db/inventory/buyItem', {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ newItemId: itemId, newItemPrice: price }),
+        })
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+const equipItem = async (itemId: number, itemType: string) => {
+    try {
+        await fetch('/api/db/userProgress/updateItem', {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ newItemId: itemId, newItemType: itemType }),
         })
     } catch (err) {
         console.log(err)
@@ -93,7 +109,11 @@ export default function ShopContainer() {
                         <CardHeader>
                             <CardTitle>{item.name}</CardTitle>
                             <CardDescription>Price: ${item.price}</CardDescription>
-                            <Button onClick={() => buyItem(item.itemId, item.price)}>Buy Item</Button>
+                            {item.owned ?
+                                (<Button onClick={() => {equipItem(item.itemId, item.type)}}> Equip/Unequip Item</Button>)
+                                :
+                                (<Button onClick={() => buyItem(item.itemId, item.price)}>Buy Item</Button>)
+                            }
                         </CardHeader>
                     </Card>
                 ))}

@@ -23,7 +23,6 @@ export async function PATCH(req) {
     let currentItemId = ""
 
     // Get the currently equipped item
-
     let response = null
     try {
         const getEquippedItem = new GetItemCommand({
@@ -32,7 +31,7 @@ export async function PATCH(req) {
         })
 
         response = await client.send(getEquippedItem);
-        currentItemId = response["currentClothes"]["M"][newItemType];
+        currentItemId = response.Item.currentClothes.M[newItemType]
     } catch (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
@@ -42,20 +41,19 @@ export async function PATCH(req) {
         // unequip item instead of replacing it
         newItemId = "";
     }
-
-    response["currentClothes"]["M"][newItemType] = newItemId;
-
+    
     // Update clothes in database
+    response.Item.currentClothes.M[newItemType] = {"N": `${newItemId}`};
     try {
         const setNewClothes = new UpdateItemCommand({
             TableName: tableName,
             Key: { "userId": { "S": "1" } },
-            UpdateExpression: "SET currentClothes :newClothes",
-            ExpressionAttributeValues: { ":newClothes": { "M": `${response["currentClothes"]["M"]}` } },
+            UpdateExpression: "SET currentClothes = :newClothes",
+            ExpressionAttributeValues: { ":newClothes": response.Item.currentClothes},
             ReturnValues: "ALL_NEW"
         })
+        response = await client.send(setNewClothes);
 
-        const response = await client.send(setNewClothes);
         return NextResponse.json(response.Attributes, { status: 200 })
     } catch (error) {
         return NextResponse.json({ error: error.message }, { status: 500 })
