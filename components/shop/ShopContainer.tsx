@@ -11,6 +11,8 @@ interface ShopItem {
     price: number;
     name: string;
     type: string;
+    equipped: boolean,
+    owned: boolean
 }
 
 const fetchShopItems = async () => {
@@ -30,12 +32,41 @@ const fetchShopItems = async () => {
             price: parseFloat(item.price.N),
             name: item.name.S,
             type: item.type.S,
+            equipped: item.equipped,
+            owned: item.owned
         }));
-    } catch(error) {
+    } catch (error) {
         console.error("Error loading shop items", error);
     }
 }
 
+const buyItem = async (itemId: number, price: number) => {
+    try {
+        await fetch('/api/db/inventory/buyItem', {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ newItemId: itemId, newItemPrice: price }),
+        })
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+const equipItem = async (itemId: number, itemType: string) => {
+    try {
+        await fetch('/api/db/userProgress/updateItem', {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ newItemId: itemId, newItemType: itemType }),
+        })
+    } catch (err) {
+        console.log(err)
+    }
+}
 
 export default function ShopContainer() {
     const [shopItems, setShopItems] = useState<ShopItem[]>([]);
@@ -67,19 +98,24 @@ export default function ShopContainer() {
             <Button onClick={() => filterByItemType("glasses")}>Glasses</Button>
             <Button onClick={() => filterByItemType("collars")}>Collars</Button>
             <Button onClick={() => filterByItemType("frames")}>Frames</Button>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {filteredShopItems.map((item, index) => (
-                        <Card key={index} className="m-4">
-                            <div className="w-1/3 mx-auto">
-                                <CardImage src={item.imageUrl} alt={item.name} width={100} height={100} />
-                            </div>
-                            <CardHeader>
-                                <CardTitle>{item.name}</CardTitle>
-                                <CardDescription>Price: ${item.price}</CardDescription>
-                            </CardHeader>
-                        </Card>
-                    ))}
-                </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {filteredShopItems.map((item, index) => (
+                    <Card key={index} className="m-4">
+                        <div className="w-1/3 mx-auto">
+                            <CardImage src={item.imageUrl} alt={item.name} width={100} height={100} />
+                        </div>
+                        <CardHeader>
+                            <CardTitle>{item.name}</CardTitle>
+                            <CardDescription>Price: ${item.price}</CardDescription>
+                            {item.owned ?
+                                (<Button onClick={() => {equipItem(item.itemId, item.type)}}> Equip/Unequip Item</Button>)
+                                :
+                                (<Button onClick={() => buyItem(item.itemId, item.price)}>Buy Item</Button>)
+                            }
+                        </CardHeader>
+                    </Card>
+                ))}
+            </div>
 
         </div>
     )

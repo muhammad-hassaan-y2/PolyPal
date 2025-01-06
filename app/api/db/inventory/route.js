@@ -1,5 +1,5 @@
 import { config as dotenvConfig } from "dotenv";
-import { DynamoDBClient, ListTablesCommand, ScanCommand} from "@aws-sdk/client-dynamodb";
+import { DynamoDBClient, ListTablesCommand, ScanCommand, GetItemCommand} from "@aws-sdk/client-dynamodb";
 import { NextResponse } from 'next/server';
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
@@ -27,14 +27,32 @@ const s3Client = new S3Client({
 // get all elements from the inventory
 export async function GET(request) {
     const origin = request.headers.get("origin");
-    const tableName = "StoreItems";
+  
     try {
+        // get user's inventory id
+        const getInventoryId = new GetItemCommand({
+            TableName: "UserProgress",
+            Key: { "userId": { "S": "1" } }
+        })
+        const userProgress = await client.send(getInventoryId)
+        const inventoryId = userProgress.Item.inventoryId
+
+        // get user's inventory
+        const getUserInventory = new GetItemCommand({
+            TableName: "UserInventory",
+            Key: { "inventoryId": inventoryId }
+        })
+        const userInventory = await client.send(getUserInventory)
+        const inventoryItems = userInventory.Item.shopItems.NS
+
+        // Scan for all shop items
         const scanCommand = new ScanCommand({
-            TableName: tableName,
+            TableName: "StoreItems",
         });
         const response = await client.send(scanCommand);
-        // make a signed url for each item
+
         for (const item of response.Items) {
+            // Make a signed url for each item
             const getObjectParams = {
                 Bucket: process.env.BUCKET_NAME,
                 // grab the "string" of s3Key
@@ -43,6 +61,18 @@ export async function GET(request) {
             const command = new GetObjectCommand(getObjectParams);
             const url = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
             item.imageUrl.S = url;
+
+            // Check to see if item is in user inventory
+            item.owned = inventoryItems.includes(item.itemId.N)
+            
+            // Check to see if item is equipped
+            const equippedItems = userProgress.Item.currentClothes.M
+            if (equippedItems.hasOwnProperty(item.type.S)){
+                item.equipped = equippedItems[item.type.S].N == item.itemId.N
+            }
+            else{
+                item.equipped = false;
+            }
         }
         return NextResponse.json(response.Items, {
             headers: {

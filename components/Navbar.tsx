@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import NavbarPoints from '@/components/ui/NavbarPoints'
 
 export default function Navbar() {
   const pathname = usePathname()
@@ -30,6 +31,7 @@ export default function Navbar() {
             {item.name}
           </Link>
         ))}
+      <NavbarPoints></NavbarPoints>
       </div>
       <button className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
         <svg
