@@ -30,4 +30,3 @@ export function NotesPanel({ isOpen, onToggle }: NotesPanelProps) {
     </div>
   )
 }
-
