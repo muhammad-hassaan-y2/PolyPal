@@ -8,24 +8,25 @@ import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 dotenvConfig();
 
 const client = new DynamoDBClient({
-    region: process.env.AWS_REGION,
+    region: process.env.REGION,
     credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID_dynamo,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY_dynamo
+        accessKeyId: process.env.ACCESS_KEY_ID_dynamo,
+        secretAccessKey: process.env.SECRET_ACCESS_KEY_dynamo
     }
 });
 
 const s3Client = new S3Client({
-    region: process.env.AWS_REGION,
+    region: process.env.REGION,
     credentials: {
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID_s3,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY_s3
+      accessKeyId: process.env.ACCESS_KEY_ID_s3,
+      secretAccessKey: process.env.SECRET_ACCESS_KEY_s3
     },
   })
 
 
 // get all elements from the inventory
-export async function GET() {
+export async function GET(request) {
+    const origin = request.headers.get("origin");
     const tableName = "StoreItems";
     try {
         const scanCommand = new ScanCommand({
@@ -43,7 +44,12 @@ export async function GET() {
             const url = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
             item.imageUrl.S = url;
         }
-        return NextResponse.json(response.Items, { status: 200 });
+        return NextResponse.json(response.Items, {
+            headers: {
+                "Access-Control-Allow-Origin": origin,
+                "content-type": "application/json",
+            },
+        });
     } catch (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
