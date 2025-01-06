@@ -32,6 +32,8 @@ const fetchShopItems = async () => {
             price: parseFloat(item.price.N),
             name: item.name.S,
             type: item.type.S,
+            equipped: item.equipped,
+            owned: item.owned
         }));
     } catch (error) {
         console.error("Error loading shop items", error);
