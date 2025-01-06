@@ -37,22 +37,39 @@ export async function PATCH(req) {
 
     try {
         // if q is greater than points, then return an error
-        const rewardPoints = new UpdateItemCommand({
-            TableName: tableName,
-            Key: { "userId": { "S": `${userId}` } },
-            UpdateExpression: "SET points = points + :q",
-            ConditionExpression: ":q > points",
-            ExpressionAttributeValues: { 
-                ":q": { "N": `${quantity}` },
-            },
-            ReturnValues: "UPDATED_NEW"
-        })
+
+        let rewardPoints
+        if (quantity >= 0) {
+            // no maximum points
+            rewardPoints = new UpdateItemCommand({
+                TableName: tableName,
+                Key: { "userId": { "S": `${userId}` } },
+                UpdateExpression: "SET points = points + :q",
+                ExpressionAttributeValues: {
+                    ":q": { "N": `${quantity}` },
+                },
+                ReturnValues: "UPDATED_NEW"
+            })
+        }
+        else {
+            // points must be minimum 0
+            rewardPoints = new UpdateItemCommand({
+                TableName: tableName,
+                Key: { "userId": { "S": `${userId}` } },
+                UpdateExpression: "SET points = points - :q",
+                ConditionExpression: "points >= :q",
+                ExpressionAttributeValues: {
+                    ":q": { "N": `${quantity * -1}` },
+                },
+                ReturnValues: "UPDATED_NEW"
+            })
+        }
 
         const response = await client.send(rewardPoints);
         return NextResponse.json(response.Attributes, { status: 200 })
     } catch (error) {
         if (error.name === 'ConditionalCheckFailedException') {
-            return NextResponse.json({ error: "The quantity made the sum negative" }, { status: 400 });
+            return NextResponse.json({ error: "The quantity made the total points negative" }, { status: 400 })
         }
         return NextResponse.json({ error: error.message }, { status: 500 })
     }

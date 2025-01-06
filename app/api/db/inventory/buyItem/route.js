@@ -13,6 +13,8 @@ const client = new DynamoDBClient({
     }
 });
 
+const URL = process.env.URL
+
 export async function PATCH(req) {
     let tableName = "UserProgress"
 
@@ -20,16 +22,21 @@ export async function PATCH(req) {
     const { newItemId } = body
     const { newItemPrice } = body
 
+    // decrease points according to price
     try{
-        const response = await fetch('http://localhost:3000/api/db/userProgress/points', {
+        const response = await fetch(URL + '/api/db/userProgress/points', {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ userId: 1, quantity: newItemPrice }),
-        });
-        // IMPLEMENT: check if this returned any updated items. if it did not then the price could not be updated (failed conditional)
-        console.log(response)
+            body: JSON.stringify({ userId: 1, quantity: -1 * newItemPrice }),
+        })
+        const data = await response.json();
+
+        if (!data.hasOwnProperty("points")){
+            // price could not be updated
+            return NextResponse.json({ error: error.message }, { status: 500 })
+        }
     }
     catch (error){
         return NextResponse.json({ error: error.message }, { status: 500 })
@@ -46,7 +53,14 @@ export async function PATCH(req) {
         const response = await client.send(getUserInventory);
         inventoryId = response.Item.inventoryId
     } catch (error) {
-        // IMPLEMENT: reupdate points to original
+        const response = await fetch(URL + '/api/db/userProgress/points', {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ userId: 1, quantity: newItemPrice }),
+        })
+
         return NextResponse.json({ error: "failed to get inventory id", details: error.message }, { status: 500 });
     }
 
@@ -66,7 +80,14 @@ export async function PATCH(req) {
         return NextResponse.json(response.Attributes, { status: 200 })
         
     } catch (error) {
-        // IMPLEMENT: reupdate points to original
-        return NextResponse.json({ error: "error updating user inventory "+ error.message }, { status: 500 })
+        const response = await fetch(URL + '/api/db/userProgress/points', {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ userId: 1, quantity: newItemPrice }),
+        })
+
+        return NextResponse.json({ error: "error updating user inventory" + error.message }, { status: 500 })
     }
 }
