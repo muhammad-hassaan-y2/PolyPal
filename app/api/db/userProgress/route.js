@@ -7,10 +7,10 @@ import { NextResponse } from 'next/server';
 dotenvConfig();
 
 const client = new DynamoDBClient({
-    region: process.env.REGION,
+    region: process.env.AWS_REGION,
     credentials: {
-        accessKeyId: process.env.ACCESS_KEY_ID_dynamo,
-        secretAccessKey: process.env.SECRET_ACCESS_KEY_dynamo
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID_dynamo,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY_dynamo
     }
 });
 
