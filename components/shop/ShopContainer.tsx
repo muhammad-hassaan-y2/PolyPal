@@ -24,14 +24,14 @@ const fetchShopItems = async () => {
             }
         });
         const data = await res.json()
-
+        console.log(data)
         // Map the DynamoDB format to a simpler structure
-        return data.map((item: ShopItem) => ({
-            itemId: item.itemId,
-            imageUrl: item.imageUrl,
-            price: item.price,
-            name: item.name,
-            type: item.type,
+        return data.map((item: any) => ({
+            itemId: item.itemId.N,
+            imageUrl: item.imageUrl.S,
+            price: item.price.N,
+            name: item.name.S,
+            type: item.type.S,
             equipped: item.equipped,
             owned: item.owned
         }));
