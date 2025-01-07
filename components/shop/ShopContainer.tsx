@@ -26,12 +26,12 @@ const fetchShopItems = async () => {
         const data = await res.json()
 
         // Map the DynamoDB format to a simpler structure
-        return data.map((item: any) => ({
-            itemId: item.itemId.N,
-            imageUrl: item.imageUrl.S,
-            price: parseFloat(item.price.N),
-            name: item.name.S,
-            type: item.type.S,
+        return data.map((item: ShopItem) => ({
+            itemId: item.itemId,
+            imageUrl: item.imageUrl,
+            price: item.price,
+            name: item.name,
+            type: item.type,
             equipped: item.equipped,
             owned: item.owned
         }));
