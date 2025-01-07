@@ -19,6 +19,7 @@ const workSans = Work_Sans({
 })
 
 export default function WelcomePage() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const lottieRef = useRef<any>(null);
 
   useEffect(() => {

@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { BookOpen, MessageCircle, BookText, Globe, Plane, Heart, Clock, ShoppingCart, Smile, Users, Palette, Sun, Brain, Map, Utensils, Train, BarChart, Newspaper, Lightbulb, Zap, Briefcase, Feather, Music, DollarSign, Mic } from 'lucide-react';
+import { MessageCircle, Globe, Heart, Clock, ShoppingCart, Smile, Users, Palette, Sun, Brain, Map, Utensils, Newspaper, Lightbulb, Zap, Briefcase, Feather, Music} from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Eczar, Work_Sans } from 'next/font/google'
 

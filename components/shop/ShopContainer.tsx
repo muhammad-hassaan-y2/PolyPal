@@ -6,13 +6,26 @@ import { Card, CardTitle, CardHeader, CardDescription, CardImage } from "@/compo
 import { Button } from '../ui/button';
 
 interface ShopItem {
-    itemId: number;
-    imageUrl: string;
-    price: number;
-    name: string;
-    type: string;
-    equipped: boolean,
-    owned: boolean
+    itemId: {
+        N: string;
+    };
+    imageUrl: {
+        S: string;
+    };
+    price: {
+        N: string;
+    };
+    name: {
+        S: string;
+    };
+    type: {
+        S: string;
+    };
+    s3Key: {
+        S: string;
+    };
+    equipped: boolean;
+    owned: boolean;
 }
 
 const fetchShopItems = async () => {
@@ -26,7 +39,7 @@ const fetchShopItems = async () => {
         const data = await res.json()
         console.log(data)
         // Map the DynamoDB format to a simpler structure
-        return data.map((item: any) => ({
+        return data.map((item: ShopItem) => ({
             itemId: item.itemId.N,
             imageUrl: item.imageUrl.S,
             price: item.price.N,

@@ -115,7 +115,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ topic, language })
     const [messages, setMessages] = useState<Message[]>([])
     const [input, setInput] = useState('')
     const [isLoading, setIsLoading] = useState(false)
-    const [userMessageCount, setUserMessageCount] = useState(0);
+    const [userMessageCount] = useState(0);
     const messagesPerReward = 10;
 
     useEffect(() => {

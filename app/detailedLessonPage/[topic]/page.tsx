@@ -5,7 +5,7 @@ import Navbar from "@/components/Navbar"
 import { useParams, useSearchParams } from 'next/navigation'
 import Notes from "@/components/Notes"
 import { ChatInterface } from '@/components/chat/ChatInterface'
-import { Eczar, Work_Sans } from 'next/font/google'
+import { Eczar } from 'next/font/google'
 
 const eczar = Eczar({
   subsets: ['latin'],
@@ -13,11 +13,11 @@ const eczar = Eczar({
   display: 'swap',
 })
 
-const workSans = Work_Sans({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  display: 'swap',
-})
+// const workSans = Work_Sans({
+//   subsets: ['latin'],
+//   weight: ['400', '500', '600', '700'],
+//   display: 'swap',
+// })
 
 export default function DetailedLessonPage() {
     const params = useParams()

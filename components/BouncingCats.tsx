@@ -68,7 +68,7 @@ export default function BouncingCats() {
         let newY = cat.y + newVelocityY * deltaTime
         let newRotation = cat.rotation + cat.rotationVelocity * deltaTime
         let newX = cat.x + cat.velocityX * deltaTime
-        let newBounceCount = cat.bounceCount
+        const newBounceCount = cat.bounceCount
 
         // Bounce off all walls with energy loss
         if (newX < 0) {
@@ -173,6 +173,7 @@ export default function BouncingCats() {
         cancelAnimationFrame(requestRef.current)
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [windowSize.width, windowSize.height])
 
   const handleMouseDown = (e: React.MouseEvent, catId: number) => {
