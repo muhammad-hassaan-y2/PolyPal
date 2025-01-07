@@ -1,6 +1,5 @@
 'use client'
 import Link from "next/link"
-import Image from "next/image"
 import Navbar from "@/components/Navbar"
 import Lottie from "lottie-react"
 import catWaveAnimation from "@/public/catWave.json"
