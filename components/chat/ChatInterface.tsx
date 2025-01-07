@@ -69,7 +69,9 @@ const splitMessage = (message: string, maxLength: number = 150): string[] => {
                 }
                 // Group 2-3 list items together if they're short enough
                 if ((currentBubble + part).length > maxLength * 1.5) {
-      voic              if (currentBubble) bubbles.push(currentBubble.trim());
+                    if (currentBubble) {
+                        bubbles.push(currentBubble.trim())
+                    }
                     currentBubble = part;
                 } else {
                     currentBubble += part;
