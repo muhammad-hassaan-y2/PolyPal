@@ -8,7 +8,7 @@ import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 dotenvConfig();
 
 const client = new DynamoDBClient({
-    region: process.env.REGION,
+    region: process.env.AWS_REGION,
     credentials: {
         accessKeyId: process.env.ACCESS_KEY_ID_dynamo,
         secretAccessKey: process.env.SECRET_ACCESS_KEY_dynamo
