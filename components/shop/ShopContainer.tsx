@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -6,24 +7,12 @@ import { Card, CardTitle, CardHeader, CardDescription, CardImage } from "@/compo
 import { Button } from '../ui/button';
 
 interface ShopItem {
-    itemId: {
-        N: string;
-    };
-    imageUrl: {
-        S: string;
-    };
-    price: {
-        N: string;
-    };
-    name: {
-        S: string;
-    };
-    type: {
-        S: string;
-    };
-    s3Key: {
-        S: string;
-    };
+    itemId: number;
+    imageUrl: string;
+    price: number;
+    name: string;
+    type: string;
+    s3Key: string;
     equipped: boolean;
     owned: boolean;
 }
@@ -37,9 +26,8 @@ const fetchShopItems = async () => {
             }
         });
         const data = await res.json()
-        console.log(data)
         // Map the DynamoDB format to a simpler structure
-        return data.map((item: ShopItem) => ({
+        return data.map((item: any) => ({
             itemId: item.itemId.N,
             imageUrl: item.imageUrl.S,
             price: item.price.N,

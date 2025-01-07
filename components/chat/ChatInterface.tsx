@@ -69,7 +69,7 @@ const splitMessage = (message: string, maxLength: number = 150): string[] => {
                 }
                 // Group 2-3 list items together if they're short enough
                 if ((currentBubble + part).length > maxLength * 1.5) {
-                    if (currentBubble) bubbles.push(currentBubble.trim());
+      voic              if (currentBubble) bubbles.push(currentBubble.trim());
                     currentBubble = part;
                 } else {
                     currentBubble += part;
@@ -211,7 +211,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ topic, language })
         const [isLoadingVoice, setIsLoadingVoice] = useState(false);
         const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(null);
 
-        const playWithVoice = async ( message: String ) => {
+        const playWithVoice = async ( message: string ) => {
             if (!message) {
                 return;
             }
@@ -226,7 +226,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ topic, language })
                 return;
             }
 
-            let voiceId = voiceCharacters[language]
+            const voiceId = voiceCharacters[language]
             try {
                 const response = await fetch('/api/polly', {
                     method: 'POST',
