@@ -80,7 +80,7 @@ export default function LoginPage() {
         <div className="text-center space-y-2">
           <Link href="/forgot-password" className="text-sm text-primary hover:underline">Forgot password?</Link>
           <div className="text-sm">
-            Don't have an account? <Link href="/register" className="text-primary hover:underline">Sign up</Link>
+            Don&apos;t have an account? <Link href="/register" className="text-primary hover:underline">Sign up</Link>
           </div>
         </div>
       </div>

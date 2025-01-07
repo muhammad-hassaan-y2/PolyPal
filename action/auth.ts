@@ -8,8 +8,8 @@ import { v4 as uuidv4 } from 'uuid'
 const dynamoDb = DynamoDBDocument.from(new DynamoDB({
   region: process.env.AWS_REGION,
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID_DYNAMO!,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY_DYNAMO!
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID_dynamo!,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY_dynamo!
   }
 }))
 
