@@ -6,6 +6,9 @@ import Image from 'next/image'
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { X } from 'lucide-react'
+import Lottie from "lottie-react"
+import catHangingAnimation from "@/public/catHanging.json"
+import catSpinAnimation from "@/public/catSpin.json"
 
 interface NotesProps {
     user: string;
@@ -77,42 +80,60 @@ export default function Notes({ user, lvl, topic, language }: NotesProps) {
 
     if (isNotesOpen) {
         return (
-            <Card className="fixed right-0 top-[65px] w-[400px] h-[calc(100vh-140px)] flex flex-col shadow-lg z-50 bg-white/95 backdrop-blur-sm rounded-[15px]">
-                <div className="flex items-center justify-between p-4 border-b">
-                <h2 className="text-lg font-semibold">Save Your Notes Here!</h2>
-                <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsNotesOpen(false)}
-                className="h-8 w-8"
-                >
-                <X className="h-4 w-4" />
-                </Button>
-                </div>
-                {isLoading ? (
-                    <div className="flex-1 flex items-center justify-center">
-                        Loading notes...
-                    </div>
-                ) : (
-                    <textarea
-                        value={noteContent}
-                        onChange={(e) => setNoteContent(e.target.value)}
-                        className="flex-1 w-full p-4 bg-transparent border-0 resize-none focus:outline-none h-[calc(100%-110px)]"
-                        placeholder="Write your notes here..."
-                    />
-                )}
-
-                <div className="p-4 border-t flex items-center justify-between">
-                    <Button onClick={saveNoteToDynamoDB}>
-                        Save Note
+            <div className="relative">
+                <Card className="fixed right-0 top-[65px] w-[400px] h-[calc(100vh-140px)] flex flex-col shadow-lg z-50 bg-white/95 backdrop-blur-sm rounded-[15px]">
+                    <div className="flex items-center justify-between p-4 border-b">
+                    <h2 className="text-lg font-semibold">Save Your Notes Here!</h2>
+                    <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setIsNotesOpen(false)}
+                    className="h-8 w-8"
+                    >
+                    <X className="h-4 w-4" />
                     </Button>
-                    {lastSaved && (
-                        <span className="text-sm text-gray-500">
-                            Saved on {lastSaved}
-                        </span>
+                    </div>
+                    
+                    {/* Hanging cat animation */}
+                    <div className="absolute -right-1 top-[58px] w-20 h-20">
+                        <Lottie 
+                            animationData={catHangingAnimation}
+                            loop={true}
+                            className="w-full h-full"
+                        />
+                    </div>
+
+                    {isLoading ? (
+                        <div className="flex-1 flex items-center justify-center">
+                            <div className="w-24 h-24">
+                                <Lottie 
+                                    animationData={catSpinAnimation}
+                                    loop={true}
+                                    className="w-full h-full"
+                                />
+                            </div>
+                        </div>
+                    ) : (
+                        <textarea
+                            value={noteContent}
+                            onChange={(e) => setNoteContent(e.target.value)}
+                            className="flex-1 w-full p-4 bg-transparent border-0 resize-none focus:outline-none h-[calc(100%-110px)]"
+                            placeholder="Write your notes here..."
+                        />
                     )}
-                </div>
-            </Card>
+
+                    <div className="p-4 border-t flex items-center justify-between">
+                        <Button onClick={saveNoteToDynamoDB}>
+                            Save Note
+                        </Button>
+                        {lastSaved && (
+                            <span className="text-sm text-gray-500">
+                                Saved on {lastSaved}
+                            </span>
+                        )}
+                    </div>
+                </Card>
+            </div>
         )
     }
 

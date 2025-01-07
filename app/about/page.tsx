@@ -1,12 +1,23 @@
 import Navbar from "@/components/Navbar"
+import { Eczar } from 'next/font/google'
+import BouncingCats from "@/components/BouncingCats"
+
+const eczar = Eczar({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+})
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-[#FFFBE8]">
+    <div className="min-h-screen bg-[#FFFBE8] overflow-hidden">
       <Navbar />
-      <main className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] -mt-16">
+      <BouncingCats />
+      <main className="relative z-20 flex flex-col items-center justify-center min-h-[calc(100vh-80px)] -mt-16">
         <div className="w-full max-w-2xl bg-transparent rounded-[25px] p-8 shadow-sm border border-black/50">
-          <h1 className="font-eczar text-4xl text-center mb-6 text-[#2D2D2D]">PolyPal</h1>
+          <h1 className={`text-5xl text-center mb-6 text-[#2D2D2D] font-semibold ${eczar.className}`}>
+            polypal
+          </h1>
           <p className="text-lg leading-relaxed text-[#2D2D2D]">
             Welcome to Chat-a-Penguin! 🐧✨ Your coolest language-learning companion where chatting with an AI penguin makes picking up new languages fun and engaging.
             <br /><br />

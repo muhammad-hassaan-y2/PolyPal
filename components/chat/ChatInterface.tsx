@@ -5,6 +5,8 @@ import { Card } from "@/components/ui/card"
 import { MessageBubble } from './message-bubble'
 import { MessageInput } from './message-input'
 import Image from 'next/image'
+import Lottie from "lottie-react"
+import catSleepAnimation from "@/public/catSleep.json"
 
 const voiceCharacters: { [key: string]: string } = {
     "English" : "Joanna",
@@ -16,6 +18,16 @@ const voiceCharacters: { [key: string]: string } = {
     "Arabic" : "Zeina"
 }
 
+const welcomeMessages: { [key: string]: string } = {
+    "English": "Welcome! Let's discuss",
+    "Spanish": "¡Bienvenido! Hablemos de",
+    "Chinese": "欢迎！让我们讨论",
+    "German": "Willkommen! Lass uns über",
+    "French": "Bienvenue ! Parlons de",
+    "Hindi": "स्वागत है! चलिए चर्चा करते हैं",
+    "Arabic": "!مرحباً! دعنا نتحدث عن"
+};
+
 interface Message {
     id: string
     content: string
@@ -23,10 +35,83 @@ interface Message {
 }
 
 interface ChatInterfaceProps {
-    topic: string
+    topic: string;
+    language: string;
 }
 
-export function ChatInterface({ topic }: ChatInterfaceProps) {
+const splitMessage = (message: string, maxLength: number = 150): string[] => {
+    // First, check if the message contains a numbered list
+    const hasNumberedList = message.match(/\d+\./);
+    
+    if (hasNumberedList) {
+        // Split by numbered items (looking for patterns like "1.", "2.", etc.)
+        const parts = message.split(/(?=\d+\.)/);
+        const bubbles: string[] = [];
+        
+        let currentBubble = '';
+        parts.forEach(part => {
+            // If this isn't a list item, process it normally
+            if (!part.match(/^\d+\./)) {
+                const sentences = part.match(/[^.!?]+[.!?]+\s*/g) || [part];
+                sentences.forEach(sentence => {
+                    if ((currentBubble + sentence).length > maxLength) {
+                        if (currentBubble) bubbles.push(currentBubble.trim());
+                        currentBubble = sentence;
+                    } else {
+                        currentBubble += sentence;
+                    }
+                });
+            } else {
+                // For list items, keep them together
+                if (currentBubble && !currentBubble.match(/\d+\./)) {
+                    bubbles.push(currentBubble.trim());
+                    currentBubble = '';
+                }
+                // Group 2-3 list items together if they're short enough
+                if ((currentBubble + part).length > maxLength * 1.5) {
+                    if (currentBubble) bubbles.push(currentBubble.trim());
+                    currentBubble = part;
+                } else {
+                    currentBubble += part;
+                }
+            }
+        });
+        
+        if (currentBubble) bubbles.push(currentBubble.trim());
+        return bubbles;
+    }
+    
+    // If no numbered list, use the original sentence-based splitting
+    const sentences = message.match(/[^.!?]+[.!?]+\s*/g) || [message];
+    const bubbles: string[] = [];
+    
+    let currentBubble = '';
+    
+    sentences.forEach(sentence => {
+        // If current sentence is already too long, split by commas
+        if (sentence.length > maxLength) {
+            const parts = sentence.split(/,\s*/);
+            parts.forEach(part => {
+                if ((currentBubble + part).length > maxLength) {
+                    if (currentBubble) bubbles.push(currentBubble.trim());
+                    currentBubble = part;
+                } else {
+                    currentBubble += (currentBubble ? ', ' : '') + part;
+                }
+            });
+        } else if ((currentBubble + sentence).length > maxLength) {
+            bubbles.push(currentBubble.trim());
+            currentBubble = sentence;
+        } else {
+            currentBubble += sentence;
+        }
+    });
+    
+    if (currentBubble) bubbles.push(currentBubble.trim());
+    return bubbles;
+};
+
+export const ChatInterface: React.FC<ChatInterfaceProps> = ({ topic, language }) => {
     const [messages, setMessages] = useState<Message[]>([])
     const [input, setInput] = useState('')
     const [isLoading, setIsLoading] = useState(false)
@@ -35,13 +120,14 @@ export function ChatInterface({ topic }: ChatInterfaceProps) {
 
     useEffect(() => {
         setMessages([])
+        const greeting = welcomeMessages[language] || welcomeMessages["English"];
         const initialMessage: Message = {
             id: Date.now().toString(),
-            content: `Welcome! Let's discuss ${topic} in Chinese. I'll focus exclusively on this topic. What would you like to know about ${topic}?`,
+            content: `${greeting} ${topic} in ${language}. I'll focus exclusively on this topic. What would you like to know about ${topic}?`,
             role: 'assistant',
         }
         setMessages([initialMessage])
-    }, [topic])
+    }, [topic, language])
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -66,23 +152,30 @@ export function ChatInterface({ topic }: ChatInterfaceProps) {
                 body: JSON.stringify({
                     inputText: input,
                     topic: topic,
-                    systemMessage: `You are a tutor focusing exclusively on the topic of "${topic}". 
-                    Only provide information and responses related to this specific topic in the context of topic. 
-                    If the user asks about anything outside this topic, politely redirect them back to ${topic}.`,
+                    language: language,
+                    systemMessage: `You are a language tutor teaching ${topic} in ${language}. 
+                    Your role is to:
+                    1. Teach concepts and vocabulary related to ${topic} in ${language}
+                    2. Provide all explanations in English
+                    3. Include examples in ${language} with English translations
+                    4. Stay focused on ${topic} and ${language} only
+                    5. Never assume the user is asking about a different language
+                    If the user asks about anything outside this topic, politely redirect them back to ${topic} in ${language}.`,
                 }),
             })
 
             const data = await response.json()
-
-            const assistantMessage: Message = {
-                id: (Date.now() + 1).toString(),
-                content: data.message || "I apologize, but I couldn't process your request. Let's continue our discussion about " + topic + ".",
-                role: 'assistant',
-            }
-
-            setUserMessageCount(userMessageCount + 1);
-
-            setMessages((prev) => [...prev, assistantMessage])
+            const messageBubbles = splitMessage(data.message);
+            
+            // Add each bubble as a separate message
+            messageBubbles.forEach((bubble, index) => {
+                const assistantMessage: Message = {
+                    id: (Date.now() + index).toString(),
+                    content: bubble,
+                    role: 'assistant',
+                };
+                setMessages(prev => [...prev, assistantMessage]);
+            });
         } catch (error) {
             console.error('Error:', error)
             const errorMessage: Message = {
@@ -115,7 +208,6 @@ export function ChatInterface({ topic }: ChatInterfaceProps) {
     }
 
         //text to speech starts
-        let language = "Chinese" //change this
         const [isLoadingVoice, setIsLoadingVoice] = useState(false);
         const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(null);
 
@@ -167,45 +259,56 @@ export function ChatInterface({ topic }: ChatInterfaceProps) {
         //text to speech ends here
 
     return (
-        <Card className="flex flex-col h-[calc(100vh-140px)] bg-white/80 backdrop-blur-sm border-[#594F43]">
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
-            {messages.map((message) => (
-                    <div key={message.id} className="flex items-start gap-2">
-                        <MessageBubble content={message.content} role={message.role} />
-                        {message.role === 'assistant' && (
-                            <button
-                                onClick={() => {
-                                    playWithVoice(message.content);
-                                    setIsLoadingVoice(!isLoadingVoice)
-                                }}
-                                //move it using this
-                                className="flex-shrink-0 -ml-1 mt-2"  
-                            >
-                                <Image 
-                                    src="/voice.png" 
-                                    alt="error" 
-                                    // change the size here
-                                    width={40}  
-                                    height={40}
-                                />
-                            </button>
-                        )}
-                    </div>
-                ))}
-                {isLoading && (
-                    <div className="flex items-center space-x-2">
-                        <div className="animate-pulse h-2 w-2 rounded-full bg-[#FF9000]" />
-                        <div className="animate-pulse h-2 w-2 rounded-full bg-[#FF9000] animation-delay-200" />
-                        <div className="animate-pulse h-2 w-2 rounded-full bg-[#FF9000] animation-delay-400" />
-                    </div>
-                )}
+        <div className="relative">
+            {/* Cat animation container */}
+            <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 w-24 h-24 z-10">
+                <Lottie 
+                    animationData={catSleepAnimation}
+                    loop={true}
+                    className="w-full h-full"
+                />
             </div>
-            <MessageInput
-                input={input}
-                isLoading={isLoading}
-                onSubmit={handleSubmit}
-                onInputChange={(e) => setInput(e.target.value)}
-            />
-        </Card>
+
+            <Card className="flex flex-col h-[calc(100vh-140px)] bg-white/80 backdrop-blur-sm border-[#594F43]">
+                <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                {messages.map((message) => (
+                        <div key={message.id} className="flex items-start gap-2">
+                            <MessageBubble content={message.content} role={message.role} />
+                            {message.role === 'assistant' && (
+                                <button
+                                    onClick={() => {
+                                        playWithVoice(message.content);
+                                        setIsLoadingVoice(!isLoadingVoice)
+                                    }}
+                                    //move it using this
+                                    className="flex-shrink-0 -ml-1 mt-2"  
+                                >
+                                    <Image 
+                                        src="/voice.png" 
+                                        alt="error" 
+                                        // change the size here
+                                        width={40}  
+                                        height={40}
+                                    />
+                                </button>
+                            )}
+                        </div>
+                    ))}
+                    {isLoading && (
+                        <div className="flex items-center space-x-2">
+                            <div className="animate-pulse h-2 w-2 rounded-full bg-[#FF9000]" />
+                            <div className="animate-pulse h-2 w-2 rounded-full bg-[#FF9000] animation-delay-200" />
+                            <div className="animate-pulse h-2 w-2 rounded-full bg-[#FF9000] animation-delay-400" />
+                        </div>
+                    )}
+                </div>
+                <MessageInput
+                    input={input}
+                    isLoading={isLoading}
+                    onSubmit={handleSubmit}
+                    onInputChange={(e) => setInput(e.target.value)}
+                />
+            </Card>
+        </div>
     )
 }
