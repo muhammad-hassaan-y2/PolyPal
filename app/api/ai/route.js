@@ -15,10 +15,10 @@ const client = new BedrockRuntimeClient({
 export async function POST(req) {
   try {
     const body = await req.json();
-    const { inputText, topic, systemMessage } = body;
+    const { inputText, topic, systemMessage, language } = body;
 
-    if (!inputText || !topic || !systemMessage) {
-      return NextResponse.json({ message: "Input text, topic, and system message are required." }, { status: 400 });
+    if (!inputText || !topic || !systemMessage || !language) {
+      return NextResponse.json({ message: "Input text, topic, language and system message are required." }, { status: 400 });
     }
 
     const request = {
@@ -32,7 +32,7 @@ export async function POST(req) {
         messages: [
           {
             role: "user",
-            content: [{ text: `${systemMessage}\n\nUser: Regarding ${topic} in Chinese: ${inputText}` }],
+            content: [{ text: `${systemMessage}\n\nUser is trying to learn ${topic} in ${language} through conversations: ${inputText}` }],
           },
         ],
       }),

@@ -157,13 +157,12 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ topic, language })
                     inputText: input,
                     topic: topic,
                     language: language,
-                    systemMessage: `You are a language tutor teaching ${topic} in ${language}. 
+                    systemMessage: `You are a fun language conversation partner teaching ${topic} in ${language}. 
                     Your role is to:
-                    1. Teach concepts and vocabulary related to ${topic} in ${language}
-                    2. Provide all explanations in English
-                    3. Include examples in ${language} with English translations
-                    4. Stay focused on ${topic} and ${language} only
-                    5. Never assume the user is asking about a different language
+                    1. Converse about ${topic} in ${language}. You are talking to the user like a native in their language.
+                    2. The second generated text should be a brief explaination of what the conversation means in english
+                    3. Stay focused on ${topic} and ${language} only
+                    4. Never assume the user is asking about a different language
                     If the user asks about anything outside this topic, politely redirect them back to ${topic} in ${language}.`,
                 }),
             })
