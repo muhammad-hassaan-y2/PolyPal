@@ -25,6 +25,22 @@ export default function WelcomePage() {
   const lottieRef = useRef<any>(null);
 
   useEffect(() => {
+    // Play meow sound when component mounts
+    const audio = new Audio('/catMeow.wav')
+    audio.volume = 0.4 // Set volume to 50%
+    
+    // Always play on the home page ('/')
+    if (window.location.pathname === '/') {
+      const playSound = async () => {
+        try {
+          await audio.play()
+        } catch (error) {
+          console.log('Audio playback failed:', error)
+        }
+      }
+      playSound()
+    }
+
     if (lottieRef.current) {
       const anim = lottieRef.current;
       
@@ -48,17 +64,22 @@ export default function WelcomePage() {
         anim.onComplete = undefined;
       };
     }
+
+    return () => {
+      audio.pause()
+      audio.currentTime = 0
+    }
   }, []);
 
   return (
     <div className="min-h-screen bg-[#FFFBE8]">
       <Navbar />
       <main className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] -mt-16">
-        <h1 className={`text-5xl mb-4 text-[#2D2D2D] font-semibold ${eczar.className}`}>
+        <h1 className={`text-7xl mb-4 text-[#2D2D2D] font-semibold ${eczar.className}`}>
           polypal
         </h1>
         
-        <div className="w-32 h-32 relative mb-8">
+        <div className="w-48 h-48 relative mb-8">
           <Lottie 
             lottieRef={lottieRef}
             animationData={catWaveAnimation}
@@ -70,14 +91,14 @@ export default function WelcomePage() {
         <div className={`flex flex-col gap-4 items-center ${workSans.className}`}>
           <Link 
             href="/lessonPage"
-            className="px-8 py-3 bg-[#FF9000] text-white rounded-full font-medium text-lg hover:bg-[#FF9000]/90 transition-colors"
+            className="px-8 py-3 bg-[#FF9000] text-white rounded-full font-medium text-3xl hover:bg-[#FF9000]/90 transition-colors"
           >
             start playing for free!
           </Link>
           
           <Link 
             href="/login"
-            className="text-[#FF9000] hover:underline"
+            className="text-[#FF9000] hover:underline text-2xl"
           >
             I already have an account
           </Link>

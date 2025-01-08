@@ -147,14 +147,12 @@ export default function BouncingCats() {
     const handleResize = () => {
       setWindowSize({
         width: window.innerWidth,
-        height: window.innerHeight
+        height: window.innerHeight - 72
       })
     }
 
-    // Set initial size and add resize listener
     handleResize()
     window.addEventListener('resize', handleResize)
-
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
@@ -206,7 +204,7 @@ export default function BouncingCats() {
 
   return (
     <div 
-      className="fixed inset-0 z-10 overflow-hidden"
+      className="fixed inset-0 z-20 overflow-hidden pt-[72px]"
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}

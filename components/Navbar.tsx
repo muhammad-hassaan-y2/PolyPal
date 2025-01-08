@@ -17,13 +17,13 @@ export default function Navbar() {
   const navItems = [
     { name: 'Home', path: '/' },
     { name: 'Languages', path: '/languages' },
-    { name: 'Levels', path: '/levels' },
+    // { name: 'Levels', path: '/levels' },
     { name: 'About', path: '/about' },
     { name: 'Store', path: '/shopPage' },
   ]
 
   return (
-    <nav className={`p-4 flex justify-between items-center bg-[#FFFBE8] font-semibold ${workSans.className}`}>
+    <nav className={`p-4 flex justify-between items-center bg-[#FFFBE8] font-semibold ${workSans.className} relative z-50`}>
       <div className="flex gap-4">
         {navItems.map((item) => (
           <Link
