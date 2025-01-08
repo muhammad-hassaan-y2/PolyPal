@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { User, Bot } from 'lucide-react';
+import MarkdownRenderer from "../MarkdownRender";
 
 interface MessageBubbleProps {
   content: string;
@@ -19,7 +20,7 @@ export function MessageBubble({ content, role }: MessageBubbleProps) {
 
       <div className={cn("rounded-lg px-4 py-2 text-sm max-w-[80%]", role === 'user' ?
         "bg-[#8CDBF3] text-[#020202] border-[#594F43]" : "bg-[#FF9000] text-[#020202] border-[#594F43]")}>
-        {content}
+          <MarkdownRenderer markdownText={content} />
       </div>
       
     </div>
