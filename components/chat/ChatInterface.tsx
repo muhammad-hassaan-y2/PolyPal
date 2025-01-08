@@ -157,7 +157,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ topic, language })
                     inputText: input,
                     topic: topic,
                     language: language,
-                    systemMessage: `You are a language tutor teaching ${topic} in ${language}. 
+                    systemMessage: `You are a fun language conversation partner teaching ${topic} in ${language}. 
                     Your role is to:
                     1. Teach concepts and vocabulary related to ${topic} in ${language}
                     2. Provide all explanations in English

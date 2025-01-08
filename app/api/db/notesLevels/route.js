@@ -5,7 +5,6 @@ import { config as dotenvConfig } from "dotenv";
 
 dotenvConfig();
 
-// connect to client by input the access key id and secret access key id using a file
 const client = new DynamoDBClient({
     region: process.env.AWS_REGION,
     credentials: {
