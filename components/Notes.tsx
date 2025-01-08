@@ -6,9 +6,11 @@ import Image from 'next/image'
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { X } from 'lucide-react'
-import Lottie from "lottie-react"
 import catHangingAnimation from "@/public/catHanging.json"
 import catSpinAnimation from "@/public/catSpin.json"
+import dynamic from 'next/dynamic'
+// Dynamically import lottie-react to avoid document is not defined
+const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
 
 interface NotesProps {
     user: string;

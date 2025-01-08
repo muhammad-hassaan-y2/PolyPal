@@ -1,10 +1,12 @@
 'use client'
 import Link from "next/link"
 import Navbar from "@/components/Navbar"
-import Lottie from "lottie-react"
 import catWaveAnimation from "@/public/catWave.json"
 import { useEffect, useRef } from "react"
 import { Eczar, Work_Sans } from 'next/font/google'
+import dynamic from 'next/dynamic'
+// Dynamically import lottie-react to avoid document is not defined
+const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
 
 const eczar = Eczar({
   subsets: ['latin'],
