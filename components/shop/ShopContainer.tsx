@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -11,8 +12,9 @@ interface ShopItem {
     price: number;
     name: string;
     type: string;
-    equipped: boolean,
-    owned: boolean
+    s3Key: string;
+    equipped: boolean;
+    owned: boolean;
 }
 
 const fetchShopItems = async () => {
@@ -24,7 +26,6 @@ const fetchShopItems = async () => {
             }
         });
         const data = await res.json()
-        console.log(data)
         // Map the DynamoDB format to a simpler structure
         return data.map((item: any) => ({
             itemId: item.itemId.N,
