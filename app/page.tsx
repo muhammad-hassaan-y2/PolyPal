@@ -88,6 +88,10 @@ export default function WelcomePage() {
           />
         </div>
 
+        <p className={`text-xl font-bold text-center ${workSans.className} mb-6`}>
+          Yes, a cat will teach you languages
+        </p>
+
         <div className={`flex flex-col gap-4 items-center ${workSans.className}`}>
           <Link 
             href="/languages"
