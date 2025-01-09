@@ -1,5 +1,5 @@
 import { config as dotenvConfig } from "dotenv";
-import { DynamoDBClient, ListTablesCommand, ScanCommand, GetItemCommand} from "@aws-sdk/client-dynamodb";
+import { DynamoDBClient, ScanCommand, GetItemCommand} from "@aws-sdk/client-dynamodb";
 import { NextResponse } from 'next/server';
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
@@ -21,13 +21,13 @@ const s3Client = new S3Client({
       accessKeyId: process.env.AWS_ACCESS_KEY_ID_s3,
       secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY_s3
     },
-  })
+})
 
 
 // get all elements from the inventory
 export async function GET(request) {
     const origin = request.headers.get("origin");
-  
+
     try {
         // get user's inventory id
         const getInventoryId = new GetItemCommand({
@@ -80,17 +80,6 @@ export async function GET(request) {
                 "content-type": "application/json",
             },
         });
-    } catch (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
-    }
-}
-
-// not used yet
-export async function POST(res) {
-    try {
-        const listTablesCommand = new ListTablesCommand({});
-        res = await client.send(listTablesCommand);
-        return NextResponse.json(res.TableNames, { status: 200 });
     } catch (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
