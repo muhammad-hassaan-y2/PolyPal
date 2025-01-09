@@ -90,7 +90,7 @@ export default function WelcomePage() {
 
         <div className={`flex flex-col gap-4 items-center ${workSans.className}`}>
           <Link 
-            href="/lessonPage"
+            href="/languages"
             className="px-8 py-3 bg-[#FF9000] text-white rounded-full font-medium text-3xl hover:bg-[#FF9000]/90 transition-colors"
           >
             start playing for free!
