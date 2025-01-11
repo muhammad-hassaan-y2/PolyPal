@@ -73,7 +73,7 @@ export default function WelcomePage() {
             href="/start"
             className="px-8 py-3 bg-[#FF9000] text-white rounded-full font-medium text-lg hover:bg-[#FF9000]/90 transition-colors"
           >
-            start playing for free!
+            Start playing for free!
           </Link>
           
           <Link 
