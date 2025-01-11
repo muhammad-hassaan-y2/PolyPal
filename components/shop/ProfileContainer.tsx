@@ -23,16 +23,17 @@ export default function ProfileContainer() {
     const [profileImages, setProfileImages] = useState<{ [key: string]: string }>({});
     const [hasProfile, setHasProfile] = useState(false);
 
-    //it should update after every purchase, rn it only updates on page load
+    //TODO : it should update after every purchase, rn it only updates on page load
     useEffect(() => {
         const fetchData = async () => {
-          const data = await fetchProfileImages();
-          if (data) {
-            setProfileImages(data);
-            setHasProfile(true);
-          } else {
-            setHasProfile(false);
-          }
+            const data = await fetchProfileImages();
+
+            if (data && data.success === true) {
+                setProfileImages(data.clothesImagesMap);
+                setHasProfile(true);
+            } else {
+                setHasProfile(false);
+            }
         };
         fetchData();
     }, []);
