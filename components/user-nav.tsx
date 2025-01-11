@@ -54,7 +54,7 @@ export function UserNav() {
             console.error('Failed to fetch user details');
           }
         } else {
-          // console.error('Session data does not contain userId');
+          console.error('Session data does not contain userId');
         }
       } catch (error) {
         console.error('Error fetching user data:', error);
