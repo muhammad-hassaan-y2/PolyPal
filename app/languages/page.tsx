@@ -25,7 +25,7 @@ export default function LanguagesPage() {
     "German",
     "French",
     "Hindi",
-    "Arabic"
+    "Arabic",
   ]
 
   
@@ -36,7 +36,7 @@ export default function LanguagesPage() {
   return (
     <div className="min-h-screen bg-[#FFFBE8]">
       <Navbar />
-      <main className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] -mt-16">
+      <main className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)]">
         <div className="w-full max-w-md bg-transparent rounded-[25px] p-8 shadow-sm border border-black/50">
           <h2 className={`text-2xl text-center mb-6 text-[#2D2D2D] font-semibold ${eczar.className}`}>Select Language</h2>
           <div className="space-y-3">
