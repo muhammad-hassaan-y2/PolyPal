@@ -7,7 +7,7 @@ import { MessageInput } from './message-input'
 import Image from 'next/image'
 import catSleepAnimation from "@/public/catSleep.json"
 import dynamic from 'next/dynamic'
-// Dynamically import lottie-react to avoid document is not defined
+
 const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
 
 const voiceCharacters: { [key: string]: string } = {

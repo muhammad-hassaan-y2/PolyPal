@@ -22,9 +22,11 @@ export async function getSession() {
     const decoded = await decrypt(session)
     return decoded
   } catch (error) {
+    console.error('Error decoding session:', error) // Log the error
     return null
   }
 }
+
 
 export async function destroySession() {
   (await cookies()).set('session', '', {
