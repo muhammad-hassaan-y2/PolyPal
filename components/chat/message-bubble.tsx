@@ -27,7 +27,7 @@ export function MessageBubble({ content, role, onPlayVoice }: MessageBubbleProps
           className="hover:bg-yellow-200 cursor-pointer"
           onMouseEnter={() => handleWordHover(word)}
           onMouseLeave={handleWordLeave}
-          onClick={() => onPlayVoice!(word)}
+          onClick={() => onPlayVoice!(hoveredWord!)}
       >
           {word}
       </span>
