@@ -1,6 +1,7 @@
 import { config as dotenvConfig } from "dotenv";
 import { DynamoDBClient, GetItemCommand } from "@aws-sdk/client-dynamodb";
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 
 // Load environment variables from .env file
 dotenvConfig();
@@ -15,14 +16,18 @@ const client = new DynamoDBClient({
     }
 });
 
+
 export async function GET() {
     const tableName = "UserProgress"
 
+    const userId = (await cookies()).get('userId')?.value;
+    console.log('userId', userId);
+    
     try {
         const getUserInventory = new GetItemCommand({
             TableName: tableName,
             // TODO: repl w signed in user later
-            Key: { "userId": { "S": "2" } }
+            Key: { "userId": { "S": userId } }
         })
 
         const response = await client.send(getUserInventory);

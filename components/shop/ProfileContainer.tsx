@@ -18,7 +18,6 @@ const fetchProfileImages = async () => {
         console.error("Error fetching profile images", error);
     }
 }
-fetchProfileImages()
 
 
 export default function ProfileContainer() {

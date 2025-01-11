@@ -34,7 +34,7 @@ export async function GET() {
     console.log('DynamoDB result:', result);
 
     if (!result.Item) {
-      console.warn(`No session found for userId: ${userId}`);
+      //console.warn(`No session found for userId: ${userId}`);
       return NextResponse.json({ userId: null });
     }
 
