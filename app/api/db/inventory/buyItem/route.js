@@ -1,6 +1,8 @@
 import { config as dotenvConfig } from "dotenv";
 import { DynamoDBClient, GetItemCommand, UpdateItemCommand } from "@aws-sdk/client-dynamodb";
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers'
+import { v1 as uuidv1 } from 'uuid'
 
 // Load environment variables from .env file
 dotenvConfig();
@@ -22,23 +24,31 @@ export async function PATCH(req) {
     const { newItemId } = body
     const { newItemPrice } = body
 
+    const userId = (await cookies()).get('userId')?.value;
+    if (!userId) {
+        return NextResponse.json({ error: "Missing user id" }, { status: 400 })
+    }
+
     // decrease points according to price
-    try{
+    try {
         const response = await fetch(URL + '/api/db/userProgress/points', {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ userId: 1, quantity: -1 * newItemPrice }),
+            body: JSON.stringify({
+                userId: userId,
+                quantity: -1 * newItemPrice
+            }),
         })
         const data = await response.json();
 
-        if (!data.hasOwnProperty("points")){
-            // price could not be updated
-            return NextResponse.json({ error: error.message }, { status: 500 })
+        if (!data.hasOwnProperty("points")) {
+            // points could not be updated
+            return NextResponse.json({ error: "Points could not be updated" }, { status: 500 })
         }
     }
-    catch (error){
+    catch (error) {
         return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
@@ -47,47 +57,48 @@ export async function PATCH(req) {
     try {
         const getUserInventory = new GetItemCommand({
             TableName: tableName,
-            Key: { "userId": { "S": "1" } }
+            Key: { "userId": { "S": `${userId}` } }
         })
 
-        const response = await client.send(getUserInventory);
-        inventoryId = response.Item.inventoryId
-    } catch (error) {
-        await fetch(URL + '/api/db/userProgress/points', {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ userId: 1, quantity: newItemPrice }),
-        })
+        const getInventoryResponse = await client.send(getUserInventory);
+        inventoryId = getInventoryResponse.Item.inventoryId
 
-        return NextResponse.json({ error: "failed to get inventory id", details: error.message }, { status: 500 });
-    }
+        if (!inventoryId) {
+            inventoryId = { "S": `${uuidv1()}`}
 
-    tableName = "UserInventory"
+            const addInventoryToUser = new UpdateItemCommand({
+                TableName: "UserProgress",
+                Key: { "userId": { "S": `${userId}` } },
+                UpdateExpression: "SET inventoryId = :newInventoryId",
+                ExpressionAttributeValues: { ":newInventoryId": inventoryId },
+                ReturnValues: "ALL_NEW"
+            })
+            await client.send(addInventoryToUser);
+        }
 
-    // Add to the inventory 
-    try {
+        tableName = "UserInventory"
+
+        // Add to the inventory 
         const rewardPoints = new UpdateItemCommand({
             TableName: tableName,
             Key: { "inventoryId": inventoryId },
             UpdateExpression: "ADD shopItems :newItemId",
-            ExpressionAttributeValues: {":newItemId": { "NS": [`${newItemId}` ]}},
+            ExpressionAttributeValues: { ":newItemId": { "NS": [`${newItemId}`] } },
             ReturnValues: "ALL_NEW"
         })
 
-        const response = await client.send(rewardPoints);
-        return NextResponse.json(response.Attributes, { status: 200 })
-        
+        const rewardPointsResponse = await client.send(rewardPoints);
+        return NextResponse.json(rewardPointsResponse.Attributes, { status: 200 })
+
     } catch (error) {
         await fetch(URL + '/api/db/userProgress/points', {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ userId: 1, quantity: newItemPrice }),
+            body: JSON.stringify({ userId: userId, quantity: newItemPrice }),
         })
 
-        return NextResponse.json({ error: "error updating user inventory" + error.message }, { status: 500 })
+        return NextResponse.json({ error: "error updating user inventory", details: error.message }, { status: 500 })
     }
 }
