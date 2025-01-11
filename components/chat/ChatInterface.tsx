@@ -222,6 +222,8 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ topic, language })
 
     const playWithVoice = async ( message: string ) => {
         if (!message) {
+            console.log('No message')
+            setIsSpeaking(false);
             return;
         }
         
