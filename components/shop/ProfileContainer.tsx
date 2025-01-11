@@ -27,7 +27,7 @@ export default function ProfileContainer() {
     useEffect(() => {
         const fetchData = async () => {
           const data = await fetchProfileImages();
-          if (data) {
+          if (data.clothesImagesMap) {
             setProfileImages(data);
             setHasProfile(true);
           } else {
