@@ -127,7 +127,6 @@ function LessonContent() {
 export default function LessonPage() {
     return (
       <div className="min-h-screen bg-[#FFFBE8]">
-        <Navbar />
         <Suspense fallback={<div>Loading lessons...</div>}>
           <LessonContent />
         </Suspense>
