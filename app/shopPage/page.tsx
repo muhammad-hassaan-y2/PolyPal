@@ -8,7 +8,7 @@ const ShopPage = () => {
     return (
         <div>
             <Navbar />
-            <div className="flex h-screen">
+            <div className="flex h-screen bg-[#FFFBE8]">
                 <ProfileContainer />
                 <div className="w-1/2">
                     <ShopContainer />

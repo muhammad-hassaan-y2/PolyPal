@@ -2,6 +2,13 @@
 import * as React from "react"
 import Image from 'next/image';
 import { cn } from "@/lib/utils"
+import { Work_Sans } from 'next/font/google';
+
+const workSans = Work_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+});
 
 const Card = React.forwardRef<
   HTMLDivElement,
@@ -24,7 +31,7 @@ const CardHeader = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("flex flex-col space-y-1.5 p-6", className)}
+    className={cn("flex flex-col space-y-1.5 p-6", className, workSans.className)}
     {...props}
   />
 ))
@@ -36,7 +43,7 @@ const CardTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("font-semibold leading-none tracking-tight", className)}
+    className={cn("font-semibold leading-none tracking-tight", className, workSans.className)}
     {...props}
   />
 ))
@@ -48,7 +55,7 @@ const CardDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("text-sm text-muted-foreground", className)}
+    className={cn("text-sm text-muted-foreground", className, workSans.className)}
     {...props}
   />
 ))
@@ -66,7 +73,7 @@ const CardImage = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<typeof Image>
 >(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("w-full h-auto rounded-t-xl", className)}>
+  <div ref={ref} className={cn("w-full h-auto rounded-t-xl mt-3", className)}>
     <Image className="w-full h-auto rounded-t-xl" fill={false} quality={90} {...props} />
   </div>
 ));

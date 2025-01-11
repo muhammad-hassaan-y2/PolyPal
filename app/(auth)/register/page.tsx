@@ -9,6 +9,19 @@ import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ErrorModal } from "@/components/error-modal"
 import { register } from '@/action/auth'
+import { Work_Sans, Eczar } from 'next/font/google'
+
+const workSans = Work_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+})
+
+const eczar = Eczar({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+})
 
 export default function RegisterPage() {
   const [username, setUsername] = useState('')
@@ -48,9 +61,9 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
+    <div className={`min-h-screen flex items-center justify-center bg-[#FFFBE8] ${workSans.className}`}>
       <div className="w-full max-w-md p-8 space-y-8 bg-card rounded-xl shadow-lg">
-        <h2 className="text-3xl font-bold text-center">Create an Account</h2>
+        <h2 className={`text-3xl font-bold text-center ${eczar.className}`}>Create an Account</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <Label htmlFor="username">Username</Label>
@@ -111,7 +124,7 @@ export default function RegisterPage() {
         </form>
         <div className="text-center">
           <p className="text-sm">
-            Already have an account? <Link href="/login" className="text-primary hover:underline">Log in</Link>
+            Already have an account? <Link href="/login" className="text-primary hover:underline"><strong>Log in</strong></Link>
           </p>
         </div>
       </div>
