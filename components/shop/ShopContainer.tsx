@@ -69,7 +69,7 @@ const equipItem = async (item: ShopItem) => {
     }
 }
 
-export default function ShopContainer() {
+export default function ShopContainer({passedPoints=0, setPassedPoints = (num : number)=>{}}) {
     const [shopItems, setShopItems] = useState<ShopItem[]>([]);
     const [filteredShopItems, setFilteredShopItems] = useState<ShopItem[]>([]);
 
@@ -98,6 +98,7 @@ export default function ShopContainer() {
         boughtItem.owned = true
         filteredShopItems[index] = boughtItem
 
+        setPassedPoints(passedPoints - boughtItem.price)
         setFilteredShopItems(filteredShopItems.slice())
     }
 

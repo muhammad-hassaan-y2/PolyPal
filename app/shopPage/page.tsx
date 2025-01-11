@@ -1,17 +1,20 @@
+"use client"
+
 import Navbar from '@/components/Navbar';
 import ShopContainer from '../../components/shop/ShopContainer';
 import ProfileContainer from '@/components/shop/ProfileContainer';
-import Image from 'next/image'
+import { useState } from 'react'
 
 const ShopPage = () => {
-    
+    const [pointsToPass, setPointsToPass] = useState(0)
+
     return (
         <div>
-            <Navbar />
+            <Navbar passedPoints={pointsToPass} setPassedPoints={setPointsToPass} />
             <div className="flex h-screen">
                 <ProfileContainer />
                 <div className="w-1/2">
-                    <ShopContainer />
+                    <ShopContainer passedPoints={pointsToPass} setPassedPoints={setPointsToPass} />
                 </div>
             </div>
         </div>

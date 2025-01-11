@@ -30,6 +30,7 @@ export default function DetailedLessonPage() {
     const level = "beginner"
     const [isPurring, setIsPurring] = useState(false)
     const audioRef = useRef<HTMLAudioElement | null>(null)
+    const [pointsToPass, setPointsToPass] = useState(0)
 
     useEffect(() => {
         // Parse the topic from the URL parameter
@@ -69,7 +70,7 @@ export default function DetailedLessonPage() {
 
     return (
         <div className="min-h-screen flex flex-col bg-[#FFFBE8]">
-            <Navbar />
+            <Navbar passedPoints={pointsToPass} setPassedPoints={setPointsToPass}/>
             <div className="flex-grow flex justify-center px-4 py-6">
                 <div className="w-full max-w-4xl">
                     <h1 className={`text-3xl font-bold text-[#2D2D2D] mb-6 text-center ${eczar.className}`}>
@@ -93,7 +94,7 @@ export default function DetailedLessonPage() {
                             <strong>Listen to Cat Purring while Studying </strong>
                         </p>
                     </div>
-                    <ChatInterface topic={topic} language={language} />
+                    <ChatInterface topic={topic} language={language} passedPoints={pointsToPass} setPassedPoints={setPointsToPass}/>
                 </div>
             </div>
 
