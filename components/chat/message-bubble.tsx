@@ -11,20 +11,18 @@ interface MessageBubbleProps {
 }
 
 export function MessageBubble({ content, role, onPlayVoice }: MessageBubbleProps) {
-
   const [hoveredWord, setHoveredWord] = useState<string | null>(null);
 
   const handleWordHover = (word: string) => {
     setHoveredWord(word);
   };
-  
   const handleWordLeave = () => {
     setHoveredWord(null);
   };
   
   const wrapWordsInSpans = (text: string) => {
-    return text.split(' ').map((word) => (
-    <span>
+    return text.split(' ').map((word, index) => (
+      <span key={`${word}-${index}`}>
       <span 
           className="hover:bg-yellow-200 cursor-pointer"
           onMouseEnter={() => handleWordHover(word)}
@@ -39,7 +37,6 @@ export function MessageBubble({ content, role, onPlayVoice }: MessageBubbleProps
     </span>
     ));
   };
-    // hover feature ends here
   
   return (
     <div className={cn("flex", role === 'user' ? "justify-end" : "justify-start")}>
