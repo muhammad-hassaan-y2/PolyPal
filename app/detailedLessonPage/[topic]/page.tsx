@@ -134,7 +134,7 @@ export default function DetailedLessonPage() {
                     <ChatInterface 
                     topic={topic} 
                     language={language} 
-                    onReward={handleRewardNotification}/>
+                    onReward={handleRewardNotification}
                     passedPoints={pointsToPass}
                     setPassedPoints={setPointsToPass}
                     />
