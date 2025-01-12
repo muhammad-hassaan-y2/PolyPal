@@ -2,7 +2,6 @@ import { config as dotenvConfig } from "dotenv";
 import { DynamoDBClient, GetItemCommand, UpdateItemCommand } from "@aws-sdk/client-dynamodb";
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers'
-import { request } from "http";
 
 // Load environment variables from .env file
 dotenvConfig();
