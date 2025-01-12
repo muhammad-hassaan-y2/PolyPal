@@ -18,8 +18,6 @@ export async function GET() {
     // Retrieve the userId from cookies
     const userId = (await cookies()).get('userId')?.value;
 
-    console.log('UserId from cookies:', userId);
-
     if (!userId) {
       console.warn('No userId found in cookies');
       return NextResponse.json({ error: 'No session found' }, { status: 401 });
@@ -30,8 +28,6 @@ export async function GET() {
       TableName: 'UserCredentials',
       Key: { userId },
     });
-
-    console.log('DynamoDB result:', result);
 
     if (!result.Item) {
       console.warn(`No user found for userId: ${userId}`);

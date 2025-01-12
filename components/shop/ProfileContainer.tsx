@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { SetStateAction, useEffect, useState } from 'react';
 import Image from 'next/image';
 
 const fetchProfileImages = async () => {
@@ -18,8 +18,17 @@ const fetchProfileImages = async () => {
     }
 }
 
+export interface ProfileData{
+    success: boolean,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    clothesImagesMap : any
+}
+interface ProfileContainerProps {
+    profileData : ProfileData,
+    setProfileData: (value: SetStateAction<ProfileData>) => void
+}
 
-export default function ProfileContainer() {
+export const ProfileContainer: React.FC<ProfileContainerProps> = ({ profileData, setProfileData}) => {
     const [profileImages, setProfileImages] = useState<{ [key: string]: string }>({});
     const [hasProfile, setHasProfile] = useState(false);
 
@@ -28,15 +37,22 @@ export default function ProfileContainer() {
         const fetchData = async () => {
             const data = await fetchProfileImages();
 
-            if (data && data.success === true) {
-                setProfileImages(data.clothesImagesMap);
+            setProfileData(data)
+        };
+        fetchData();
+    }, [setProfileData]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            if (profileData && profileData.success === true) {
+                setProfileImages(profileData.clothesImagesMap);
                 setHasProfile(true);
             } else {
                 setHasProfile(false);
             }
         };
         fetchData();
-    }, []);
+    }, [profileData]);
 
     return (
         <div className="w-1/2 flex items-center justify-center">

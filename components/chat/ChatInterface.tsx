@@ -234,6 +234,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ topic, language, o
                 onReward(true);
                 const response = await fetch('/api/db/userProgress/points', {
                     method: 'PATCH',
+                    body: JSON.stringify({ quantity: 10 }),
                 });
 
                 const newPoints = +(passedPoints) + 10;
