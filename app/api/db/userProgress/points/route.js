@@ -1,5 +1,5 @@
 import { config as dotenvConfig } from "dotenv";
-import { DynamoDBClient, GetItemCommand, UpdateItemCommand } from "@aws-sdk/client-dynamodb";
+import { DynamoDBClient, GetItemCommand, PutItemCommand, UpdateItemCommand } from "@aws-sdk/client-dynamodb";
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers'
 
@@ -19,17 +19,37 @@ export async function GET() {
     const userId = (await cookies()).get('userId')?.value;
     if (!userId) {
         return NextResponse.json({ error: "Missing user id" }, { status: 400 })
-    }    
+    }
 
+    const userIdKey = { "userId": { "S": `${userId}` } }
     try {
         const getPoints = new GetItemCommand({
             TableName: tableName,
-            Key: { "userId": { "S": `${userId}` } }
+            Key: userIdKey
         })
 
         const response = await client.send(getPoints);
+
+        if (!response.Item) {
+            const input = {
+                "Item": {
+                    "userId": userIdKey.userId,
+                    "points": {
+                        "N": "0"
+                    }
+                },
+                "TableName": tableName
+            }
+
+            const putUser = new PutItemCommand(input)
+            await client.send(putUser)
+
+            return NextResponse.json({ 'points': 0 }, { status: 200 });
+        }
+
         return NextResponse.json({ 'points': response.Item.points.N }, { status: 200 });
     } catch (error) {
+        console.log(error)
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }
@@ -42,7 +62,7 @@ export async function PATCH(req) {
     const userId = ((await cookies()).get('userId')?.value) || body.userId;
     if (!userId) {
         return NextResponse.json({ error: "Missing user id" }, { status: 400 })
-    }    
+    }
 
     try {
         // if q is greater than points, then return an error

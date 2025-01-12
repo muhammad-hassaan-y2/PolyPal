@@ -24,7 +24,7 @@ export async function GET() {
     if (!userId) {
         return NextResponse.json({ message: 'User is not logged in' }, { status: 200 });
     }
-    
+
     try {
         const getUserInventory = new GetItemCommand({
             TableName: tableName,
@@ -32,7 +32,9 @@ export async function GET() {
         })
 
         const response = await client.send(getUserInventory);
-        const clothesMap = response.Item.currentClothes.M
+
+        const clothesMap = (response.Item.hasOwnProperty("currentClothes")) ?
+            response.Item.currentClothes.M : {}
 
         // a map of clothingType: imageUrl
         let clothesImagesMap = {};
@@ -63,9 +65,9 @@ export async function GET() {
                 if (inventoryResponse?.imageUrl?.S) {
                     clothesImagesMap[key] = inventoryResponse.imageUrl.S;
                 } else {
-                console.warn(`No valid imageUrl found for ${key}`);
+                    console.warn(`No valid imageUrl found for ${key}`);
                 }
-               
+
             }
         }
         return NextResponse.json({ success: true, clothesImagesMap }, { status: 200 });
