@@ -5,7 +5,7 @@ import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb';
 
 const dynamoDb = DynamoDBDocument.from(
   new DynamoDB({
-    region: process.env.AWS_REGION , 
+    region: process.env.AWS_REGION,
     credentials: {
       accessKeyId: process.env.AWS_ACCESS_KEY_ID_dynamo!,
       secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY_dynamo!,
@@ -22,38 +22,41 @@ export async function GET() {
 
     if (!userId) {
       console.warn('No userId found in cookies');
-      return NextResponse.json({ userId: null });
+      return NextResponse.json({ error: 'No session found' }, { status: 401 });
     }
 
-    // Fetch the session from DynamoDB
+    // Fetch the user details from the UserCredentials table
     const result = await dynamoDb.get({
-      TableName: 'UserSession', 
+      TableName: 'UserCredentials',
       Key: { userId },
     });
 
     console.log('DynamoDB result:', result);
 
     if (!result.Item) {
-      //console.warn(`No session found for userId: ${userId}`);
-      return NextResponse.json({ userId: null });
+      console.warn(`No user found for userId: ${userId}`);
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    // Check if the session has expired
-    if (new Date(result.Item.expiresAt) < new Date()) {
+    const { firstName, lastName, username } = result.Item;
+
+    // Check if the session is valid (optional if using session expiration in UserCredentials)
+    if (result.Item.sessionExpiresAt && new Date(result.Item.sessionExpiresAt) < new Date()) {
       console.warn(`Session expired for userId: ${userId}`);
-      await dynamoDb.delete({
-        TableName: 'UserSession', // Corrected table name
-        Key: { userId },
-      });
-      return NextResponse.json({ userId: null });
+      return NextResponse.json({ error: 'Session expired' }, { status: 401 });
     }
 
     console.log('Session validated for userId:', userId);
 
-    // Return the userId from the session
-    return NextResponse.json({ userId });
+    // Return the user details
+    return NextResponse.json({
+      userId,
+      firstName,
+      lastName,
+      username,
+    });
   } catch (error) {
     console.error('Error fetching session:', error);
-    return NextResponse.json({ userId: null }, { status: 500 });
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

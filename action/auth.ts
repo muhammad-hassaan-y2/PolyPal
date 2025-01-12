@@ -39,22 +39,17 @@ async function createSession(userId: string) {
 
 export async function getSession() {
   const userId = (await cookies()).get('userId')?.value;
-  console.log('Retrieved session userId:', userId);
+
   if (!userId) return null;
 
   try {
     const result = await dynamoDb.get({
-      TableName: SESSION_TABLE_NAME,
+      TableName: USER_TABLE_NAME,
       Key: { userId },
     });
 
-    if (!result.Item) return null;
-
-    if (new Date(result.Item.expiresAt) < new Date()) {
-      await dynamoDb.delete({
-        TableName: SESSION_TABLE_NAME,
-        Key: { userId },
-      });
+    if (!result.Item || new Date(result.Item.sessionExpiresAt) < new Date()) {
+      // Clear the cookie if the session has expired
       (await cookies()).set('userId', '', { expires: new Date(0) });
       return null;
     }
@@ -67,43 +62,64 @@ export async function getSession() {
 }
 
 
+
 export async function login(username: string, password: string) {
   try {
     const result = await dynamoDb.scan({
       TableName: USER_TABLE_NAME,
       FilterExpression: 'username = :username',
       ExpressionAttributeValues: {
-        ':username': username
-      }
-    })
+        ':username': username,
+      },
+    });
 
     if (!result.Items || result.Items.length === 0) {
-      return { success: false, error: 'User not found' }
+      return { success: false, error: 'User not found' };
     }
 
-    const user = result.Items[0]
-    const isPasswordValid = await bcrypt.compare(password, user.password)
+    const user = result.Items[0];
+    const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      return { success: false, error: 'Invalid password' }
+      return { success: false, error: 'Invalid password' };
     }
 
-    await createSession(user.userId)
+    const sessionExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
 
-    return { 
-      success: true, 
-      user: { 
-        userId: user.userId, 
-        username: user.username, 
-        firstName: user.firstName, 
-        lastName: user.lastName 
-      } 
-    }
+    // Update session expiration in UserCredentials
+    await dynamoDb.update({
+      TableName: USER_TABLE_NAME,
+      Key: { userId: user.userId },
+      UpdateExpression: 'SET sessionExpiresAt = :expiresAt',
+      ExpressionAttributeValues: {
+        ':expiresAt': sessionExpiresAt,
+      },
+    });
+
+    // Set cookie
+    (await cookies()).set('userId', user.userId, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      expires: new Date(sessionExpiresAt),
+      path: '/',
+    });
+
+    return {
+      success: true,
+      user: {
+        userId: user.userId,
+        username: user.username,
+        firstName: user.firstName,
+        lastName: user.lastName,
+      },
+    };
   } catch (error) {
-    console.error('Login error:', error)
-    return { success: false, error: 'An error occurred during login' }
+    console.error('Login error:', error);
+    return { success: false, error: 'An error occurred during login' };
   }
 }
+
 
 export async function register(username: string, password: string, firstName: string, lastName: string) {
   try {
@@ -160,19 +176,24 @@ export async function register(username: string, password: string, firstName: st
 }
 
 export async function logout() {
-  try {
-    const userId = (await cookies()).get('userId')?.value
-    if (userId) {
-      await dynamoDb.delete({
-        TableName: SESSION_TABLE_NAME,
-        Key: { userId }
-      })
-    }
-    (await cookies()).set('userId', '', { expires: new Date(0) })
-    return { success: true }
-  } catch (error) {
-    console.error('Logout error:', error)
-    return { success: false, error: 'An error occurred during logout' }
-  }
-}
+  const userId = (await cookies()).get('userId')?.value;
 
+  if (userId) {
+    try {
+      await dynamoDb.update({
+        TableName: USER_TABLE_NAME,
+        Key: { userId },
+        UpdateExpression: 'REMOVE sessionExpiresAt',
+      });
+
+      (await cookies()).set('userId', '', { expires: new Date(0) });
+
+      return { success: true };
+    } catch (error) {
+      console.error('Logout error:', error);
+      return { success: false, error: 'An error occurred during logout' };
+    }
+  }
+
+  return { success: true };
+}
