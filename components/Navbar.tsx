@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 
 import Link from 'next/link'
@@ -48,7 +49,7 @@ export default function Navbar({ passedPoints = -1, setPassedPoints = (num: numb
       console.error('Error:', error)
     }
 
-  }, [])
+  }, [setPassedPoints])
 
   return (
     <nav

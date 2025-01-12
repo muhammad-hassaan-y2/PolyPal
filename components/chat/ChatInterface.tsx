@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -40,7 +41,7 @@ interface ChatInterfaceProps {
     topic: string;
     language: string;
     passedPoints: number;
-    setPassedPoints: Function
+    setPassedPoints: (points: number) => void; // Explicitly define the function type
 }
 
 const splitMessage = (message: string, maxLength: number = 150): string[] => {

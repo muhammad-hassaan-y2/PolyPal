@@ -39,7 +39,6 @@ export async function GET(request) {
         })
         const userProgress = await client.send(getInventoryId)
         const inventoryId = userProgress.Item.inventoryId 
-
         let inventoryItems = []
         if (inventoryId){
             // get user's inventory
@@ -70,9 +69,8 @@ export async function GET(request) {
 
             // Check to see if item is in user inventory
             item.owned = inventoryItems.includes(item.itemId.N)
-            
             // Check to see if item is equipped
-            const equippedItems = userProgress.Item.currentClothes? userProgress.currentClothes.M : []
+            const equippedItems = userProgress.Item.currentClothes? userProgress.Item.currentClothes.M : []
             if (equippedItems.hasOwnProperty(item.type.S)){
                 item.equipped = equippedItems[item.type.S].N == item.itemId.N
             }
