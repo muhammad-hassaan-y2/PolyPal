@@ -39,6 +39,7 @@ interface Message {
 interface ChatInterfaceProps {
     topic: string;
     language: string;
+    onReward: (messageCount: boolean) => void;
 }
 
 const splitMessage = (message: string, maxLength: number = 150): string[] => {
@@ -115,12 +116,13 @@ const splitMessage = (message: string, maxLength: number = 150): string[] => {
     return bubbles;
 };
 
-export const ChatInterface: React.FC<ChatInterfaceProps> = ({ topic, language }) => {
+export const ChatInterface: React.FC<ChatInterfaceProps> = ({ topic, language, onReward }) => {
     const [messages, setMessages] = useState<Message[]>([])
     const [input, setInput] = useState('')
     const [isLoading, setIsLoading] = useState(false)
-    const [userMessageCount] = useState(0);
+    const [userMessageCount, setUserMessageCount] = useState(1);
     const messagesPerReward = 10;
+    
 
     useEffect(() => {
         setMessages([])
@@ -198,11 +200,16 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ topic, language })
         }
 
         try {
-            if ((userMessageCount % messagesPerReward) == 0) {
+            setUserMessageCount(userMessageCount + 1);
+            console.log("User M Count: ", userMessageCount)
+            if ((userMessageCount % messagesPerReward) == 0 && userMessageCount !== 0) {
+                // console.log("Reward...")
+                onReward(true);
                 // const response = await fetch('/api/db/userProgress/points', {
                 //     method: 'PATCH',
                 //     body: JSON.stringify({ userId: 1, quantity: 10 }),
                 // });
+
             }
         }
         catch (error) {
