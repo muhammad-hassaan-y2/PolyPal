@@ -39,8 +39,6 @@ export async function GET() {
         if (clothesMap) {
             // goes through key, val of currentClothes and extracts imgUrl to put in clothesImagesMap
             for (let [key, value] of Object.entries(clothesMap)) {
-                console.log(key, value);
-
                 // fetch the inventory
                 let inventoryResponse;
                 try {

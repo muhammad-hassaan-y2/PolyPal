@@ -2,9 +2,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { useEffect, useState } from 'react';
+import { SetStateAction, useEffect, useState } from 'react';
 import { Card, CardTitle, CardHeader, CardDescription, CardImage } from "@/components/ui/card";
 import { Button } from '../ui/button';
+import { ProfileData } from './ProfileContainer';
 
 interface ShopItem {
     itemId: number;
@@ -70,7 +71,7 @@ const buyItem = async (item: ShopItem) => {
     }
 }
 
-const equipItem = async (item: ShopItem) => {
+const equipItem = async (item: ShopItem, setProfileData: (value: SetStateAction<ProfileData>) => void) => {
     try {
         await fetch('/api/db/userProgress/updateItem', {
             method: 'PATCH',
@@ -82,9 +83,33 @@ const equipItem = async (item: ShopItem) => {
     } catch (err) {
         console.log(err)
     }
+
+    const profileData = await fetchProfileImages()
+    setProfileData(profileData)
 }
 
-export default function ShopContainer({passedPoints=0, setPassedPoints = (num : number)=>{}}) {
+interface ShopContainerProps {
+    passedPoints : number,
+    setPassedPoints: (value: SetStateAction<number>) => void
+    setProfileData: (value: SetStateAction<ProfileData>) => void
+}
+
+const fetchProfileImages = async () => {
+    try {
+        const res = await fetch(`/api/db/updateProfile`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        const data = await res.json()
+        return data
+    } catch (error) {
+        console.error("Error fetching profile images", error);
+    }
+}
+
+export const ShopContainer: React.FC<ShopContainerProps> = ({ passedPoints, setPassedPoints, setProfileData}) => {
     const [shopItems, setShopItems] = useState<ShopItem[]>([]);
     const [filteredShopItems, setFilteredShopItems] = useState<ShopItem[]>([]);
     const [userSession, setUserSession] = useState(false)
@@ -111,22 +136,33 @@ export default function ShopContainer({passedPoints=0, setPassedPoints = (num : 
     }
 
     const handleBuyItem = (index: number) => {
-        buyItem(filteredShopItems[index])
-
         const boughtItem = filteredShopItems[index]
-        boughtItem.owned = true
-        filteredShopItems[index] = boughtItem
 
-        setPassedPoints(passedPoints - boughtItem.price)
-        setFilteredShopItems(filteredShopItems.slice())
+        if (passedPoints - boughtItem.price >= 0){
+            buyItem(boughtItem)
+
+            boughtItem.owned = true
+            filteredShopItems[index] = boughtItem
+    
+            setPassedPoints(passedPoints - boughtItem.price)
+            setFilteredShopItems(filteredShopItems.slice())
+        }
     }
 
-    const handleEquipItem = (index: number) => {
-        equipItem(filteredShopItems[index])
+    const handleEquipItem = (index: number, setProfileData : (value: SetStateAction<ProfileData>) => void) => {
+        equipItem(filteredShopItems[index], setProfileData)
 
         const equippedItem = filteredShopItems[index]
+
         equippedItem.equipped = !equippedItem.equipped
         filteredShopItems[index] = equippedItem
+
+        filteredShopItems.map((item: ShopItem)=>{
+            if (item.itemId != equippedItem.itemId && 
+                item.type === equippedItem.type){
+                item.equipped = false
+            }
+        })
 
         setFilteredShopItems(filteredShopItems.slice())
     }
@@ -151,7 +187,7 @@ export default function ShopContainer({passedPoints=0, setPassedPoints = (num : 
                             <div>
                                 {userSession?  
                                     (item.owned ?
-                                        (<Button onClick={() => {handleEquipItem(index)}}> {item.equipped? "Unequip" : "Equip" + " Item"}</Button>)
+                                        (<Button onClick={() => {handleEquipItem(index, setProfileData)}}> {item.equipped? "Unequip" : "Equip" + " Item"}</Button>)
                                         :
                                         (<Button style={{backgroundColor: "#e25237"}} onClick={() => handleBuyItem(index)}>Buy Item</Button>)
                                     )  

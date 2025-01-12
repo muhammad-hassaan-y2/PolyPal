@@ -229,6 +229,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ topic, language, p
             if (userSession && (userMessageCount % messagesPerReward) == 9) {
                 const response = await fetch('/api/db/userProgress/points', {
                     method: 'PATCH',
+                    body: JSON.stringify({ quantity: 10 }),
                 });
 
                 const newPoints = +(passedPoints) + 10

@@ -41,7 +41,7 @@ export async function PATCH(req) {
             const currentItemId = userProgress.currentClothes.M[newItemType]
 
             // Check if requested item is already equipped
-            if (currentItemId.N === newItemId) {
+            if (currentItemId && currentItemId.N === newItemId) {
                 // unequip item instead of replacing it
                 newItemId = "-1";
             }
