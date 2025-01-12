@@ -228,7 +228,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ topic, language, o
 
         setUserMessageCount(userMessageCount + 1)
         try {
-            setUserMessageCount(userMessageCount + 1);
             console.log("User M Count: ", userMessageCount)
             if ((userMessageCount % messagesPerReward) == 0 && userMessageCount !== 0) {
                 // console.log("Reward...");
