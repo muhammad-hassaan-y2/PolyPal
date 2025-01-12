@@ -25,8 +25,23 @@ const fetchPoints = async () => {
   return result.points
 }
 
-export default function Navbar({ passedPoints = -1, setPassedPoints = (num: number) => { } }) {
+const fetchUserSession = async() => {
+  try {
+      const res = await fetch('/api/get-session', {
+          method: 'GET',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+      })
+      return (await res.json()).userId
+  } catch (err) {
+      return false;
+  }
+}
+
+export default function Navbar({ passedPoints = -1, setPassedPoints = (num: number) => { }, disablePoints = true }) {
   const [localPoints, setLocalPoints] = useState(0)
+  const [userSession, setUserSession] = useState(false)
   const pathname = usePathname()
   const navItems = [
     { name: 'Home', path: '/' },
@@ -35,6 +50,14 @@ export default function Navbar({ passedPoints = -1, setPassedPoints = (num: numb
     { name: 'About', path: '/about' },
     { name: 'Store', path: '/shopPage' },
   ]
+
+  useEffect(() => {
+    async function setupShop() {
+      const fetchedSession = await fetchUserSession();
+      setUserSession(fetchedSession)
+    }
+    setupShop();
+  }, []);
 
   useEffect(() => {
     try {
@@ -70,7 +93,7 @@ export default function Navbar({ passedPoints = -1, setPassedPoints = (num: numb
         ))}
         <span
           className="px-4 py-2 font-bold hover:scale-110 transition-transform text-black justify-left">
-          Points: {(passedPoints == -1) ? localPoints : passedPoints}
+          {(userSession && !disablePoints) ? "Points:" + ((passedPoints == -1) ? localPoints : passedPoints) : ""}
         </span>
       </div>
       <div className="flex items-center">

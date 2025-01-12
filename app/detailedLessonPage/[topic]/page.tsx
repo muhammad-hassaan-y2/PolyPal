@@ -84,7 +84,7 @@ export default function DetailedLessonPage() {
 
     return (
         <div className="min-h-screen flex flex-col bg-[#FFFBE8]">
-            <Navbar passedPoints={pointsToPass} setPassedPoints={setPointsToPass}/>
+            <Navbar passedPoints={pointsToPass} setPassedPoints={setPointsToPass} disablePoints={false}/>
             <div className="flex-grow flex justify-center px-4 py-6">
                 <div className="w-full max-w-4xl">
                     <h1 className={`text-3xl font-bold text-[#2D2D2D] mb-6 text-center ${eczar.className}`}>

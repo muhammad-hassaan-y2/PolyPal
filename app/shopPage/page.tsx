@@ -10,7 +10,7 @@ const ShopPage = () => {
 
     return (
         <div>
-            <Navbar passedPoints={pointsToPass} setPassedPoints={setPointsToPass} />
+            <Navbar passedPoints={pointsToPass} setPassedPoints={setPointsToPass} disablePoints={false}/>
             <div className="flex h-screen">
                 <ProfileContainer />
                 <div className="w-1/2">

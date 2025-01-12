@@ -118,12 +118,36 @@ const splitMessage = (message: string, maxLength: number = 150): string[] => {
     return bubbles;
 };
 
+const fetchUserSession = async() => {
+    try {
+        const res = await fetch('/api/get-session', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        return (await res.json()).userId
+    } catch (err) {
+        return false;
+    }
+}
+
 export const ChatInterface: React.FC<ChatInterfaceProps> = ({ topic, language, passedPoints, setPassedPoints }) => {
     const [messages, setMessages] = useState<Message[]>([])
     const [input, setInput] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const [userMessageCount, setUserMessageCount] = useState(0);
+    const [userSession, setUserSession] = useState(false)
+
     const messagesPerReward = 10;
+
+    useEffect(() => {
+        async function getUserSession() {
+            const fetchedSession = await fetchUserSession();
+            setUserSession(fetchedSession)
+        }
+        getUserSession();
+    }, []);
 
     useEffect(() => {
         setMessages([])
@@ -202,10 +226,9 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ topic, language, p
 
         setUserMessageCount(userMessageCount + 1)
         try {
-            if ((userMessageCount % messagesPerReward) == 9) {
+            if (userSession && (userMessageCount % messagesPerReward) == 9) {
                 const response = await fetch('/api/db/userProgress/points', {
                     method: 'PATCH',
-                    body: JSON.stringify({ userId: 1, quantity: 10 }),
                 });
 
                 const newPoints = +(passedPoints) + 10
