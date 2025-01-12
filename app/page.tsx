@@ -36,7 +36,7 @@ export default function WelcomePage() {
             },
         });
         const data = await response.json();
-        if  (data.userId) {
+        if (data.userId) {
             setLoggedIn(true);
         }
     };
