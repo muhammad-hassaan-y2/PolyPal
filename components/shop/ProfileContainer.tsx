@@ -20,6 +20,7 @@ const fetchProfileImages = async () => {
 
 export interface ProfileData{
     success: boolean,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     clothesImagesMap : any
 }
 interface ProfileContainerProps {
@@ -39,7 +40,7 @@ export const ProfileContainer: React.FC<ProfileContainerProps> = ({ profileData,
             setProfileData(data)
         };
         fetchData();
-    }, []);
+    }, [setProfileData]);
 
     useEffect(() => {
         const fetchData = async () => {
