@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -40,6 +41,8 @@ interface ChatInterfaceProps {
     topic: string;
     language: string;
     onReward: (messageCount: boolean) => void;
+    passedPoints: number;
+    setPassedPoints: (points: number) => void; // Explicitly define the function type
 }
 
 const splitMessage = (message: string, maxLength: number = 150): string[] => {
@@ -116,13 +119,37 @@ const splitMessage = (message: string, maxLength: number = 150): string[] => {
     return bubbles;
 };
 
-export const ChatInterface: React.FC<ChatInterfaceProps> = ({ topic, language, onReward }) => {
+
+const fetchUserSession = async() => {
+    try {
+        const res = await fetch('/api/get-session', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        return (await res.json()).userId
+    } catch (err) {
+        return false;
+    }
+}
+
+export const ChatInterface: React.FC<ChatInterfaceProps> = ({ topic, language, onReward, passedPoints, setPassedPoints }) => {
     const [messages, setMessages] = useState<Message[]>([])
     const [input, setInput] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const [userMessageCount, setUserMessageCount] = useState(1);
+    const [userSession, setUserSession] = useState(false)
     const messagesPerReward = 10;
     
+
+    useEffect(() => {
+        async function getUserSession() {
+            const fetchedSession = await fetchUserSession();
+            setUserSession(fetchedSession)
+        }
+        getUserSession();
+    }, []);
 
     useEffect(() => {
         setMessages([])
@@ -199,17 +226,22 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ topic, language, o
             setIsLoading(false)
         }
 
+        setUserMessageCount(userMessageCount + 1)
         try {
             setUserMessageCount(userMessageCount + 1);
             console.log("User M Count: ", userMessageCount)
             if ((userMessageCount % messagesPerReward) == 0 && userMessageCount !== 0) {
-                // console.log("Reward...")
+                // console.log("Reward...");
                 onReward(true);
-                // const response = await fetch('/api/db/userProgress/points', {
-                //     method: 'PATCH',
-                //     body: JSON.stringify({ userId: 1, quantity: 10 }),
-                // });
 
+            }
+            if (userSession && (userMessageCount % messagesPerReward) == 9) {
+                const response = await fetch('/api/db/userProgress/points', {
+                    method: 'PATCH',
+                });
+
+                const newPoints = +(passedPoints) + 10;
+                setPassedPoints(newPoints);
             }
         }
         catch (error) {
@@ -229,7 +261,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ topic, language, o
 
     const playWithVoice = async ( message: string ) => {
         if (!message) {
-            console.log('No message')
+            console.log('No message');
             setIsSpeaking(false);
             return;
         }

@@ -1,6 +1,7 @@
 import { config as dotenvConfig } from "dotenv";
 import { DynamoDBClient, GetItemCommand, UpdateItemCommand } from "@aws-sdk/client-dynamodb";
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers'
 
 // Load environment variables from .env file
 dotenvConfig();
@@ -15,10 +16,15 @@ const client = new DynamoDBClient({
 
 export async function GET() {
     const tableName = "UserProgress"
+    const userId = (await cookies()).get('userId')?.value;
+    if (!userId) {
+        return NextResponse.json({ error: "Missing user id" }, { status: 400 })
+    }    
+
     try {
         const getPoints = new GetItemCommand({
             TableName: tableName,
-            Key: { "userId": { "S": "1" } }
+            Key: { "userId": { "S": `${userId}` } }
         })
 
         const response = await client.send(getPoints);
@@ -32,8 +38,11 @@ export async function PATCH(req) {
     const tableName = "UserProgress"
 
     const body = await req.json() // Parse the incoming request body
-    const { userId } = body
     const { quantity } = body
+    const userId = ((await cookies()).get('userId')?.value) || body.userId;
+    if (!userId) {
+        return NextResponse.json({ error: "Missing user id" }, { status: 400 })
+    }    
 
     try {
         // if q is greater than points, then return an error
@@ -44,9 +53,10 @@ export async function PATCH(req) {
             rewardPoints = new UpdateItemCommand({
                 TableName: tableName,
                 Key: { "userId": { "S": `${userId}` } },
-                UpdateExpression: "SET points = points + :q",
+                UpdateExpression: "SET points = if_not_exists(points, :zero) + :q",
                 ExpressionAttributeValues: {
                     ":q": { "N": `${quantity}` },
+                    ":zero": { "N": '0' },
                 },
                 ReturnValues: "UPDATED_NEW"
             })
@@ -56,10 +66,11 @@ export async function PATCH(req) {
             rewardPoints = new UpdateItemCommand({
                 TableName: tableName,
                 Key: { "userId": { "S": `${userId}` } },
-                UpdateExpression: "SET points = points - :q",
+                UpdateExpression: "SET points = if_not_exists(points, :zero) - :q",
                 ConditionExpression: "points >= :q",
                 ExpressionAttributeValues: {
                     ":q": { "N": `${quantity * -1}` },
+                    ":zero": { "N": '0' },
                 },
                 ReturnValues: "UPDATED_NEW"
             })

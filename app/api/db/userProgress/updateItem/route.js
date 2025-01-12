@@ -1,6 +1,7 @@
 import { config as dotenvConfig } from "dotenv";
 import { DynamoDBClient, GetItemCommand, UpdateItemCommand } from "@aws-sdk/client-dynamodb";
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers'
 
 // Load environment variables from .env file
 dotenvConfig();
@@ -20,42 +21,53 @@ export async function PATCH(req) {
     let { newItemId } = body
     const { newItemType } = body
 
-    let currentItemId = ""
+    // Ensure userId
+    const userId = (await cookies()).get('userId')?.value;
+    if (!userId) {
+        return NextResponse.json({ error: "Missing user id" }, { status: 400 })
+    }
 
     // Get the currently equipped item
-    let response = null
     try {
+        // Get userProgress
         const getEquippedItem = new GetItemCommand({
             TableName: tableName,
-            Key: { "userId": { "S": "1" } }
+            Key: { "userId": { "S": `${userId}` } }
         })
+        const getResponse = await client.send(getEquippedItem);
+        let userProgress = getResponse.Item
 
-        response = await client.send(getEquippedItem);
-        currentItemId = response.Item.currentClothes.M[newItemType]
-    } catch (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
-    }
+        if (userProgress.hasOwnProperty("currentClothes")) {
+            const currentItemId = userProgress.currentClothes.M[newItemType]
 
-    // Check if requested item is already equipped
-    if (currentItemId["N"] === newItemId) {
-        // unequip item instead of replacing it
-        newItemId = "-1";
-    }
-    
-    // Update clothes in database
-    response.Item.currentClothes.M[newItemType] = {"N": `${newItemId}`};
+            // Check if requested item is already equipped
+            if (currentItemId.N === newItemId) {
+                // unequip item instead of replacing it
+                newItemId = "-1";
+            }
 
-    try {
+            // Update clothes in database
+            userProgress.currentClothes.M[newItemType] = { "N": `${newItemId}` };
+        }
+        else {
+            // Create currentClothes for userProgress entry 
+            const newItem = { "N": `${newItemId}` }
+
+            userProgress.currentClothes = { "M": {} }
+            userProgress.currentClothes.M[newItemType] = newItem
+        }
+
+        // Update currentClothes for user
         const setNewClothes = new UpdateItemCommand({
             TableName: tableName,
-            Key: { "userId": { "S": "1" } },
+            Key: { "userId": { "S": `${userId}` } },
             UpdateExpression: "SET currentClothes = :newClothes",
-            ExpressionAttributeValues: { ":newClothes": response.Item.currentClothes},
+            ExpressionAttributeValues: { ":newClothes": userProgress.currentClothes },
             ReturnValues: "ALL_NEW"
         })
-        response = await client.send(setNewClothes);
+        const setResponse = await client.send(setNewClothes);
 
-        return NextResponse.json(response.Attributes, { status: 200 })
+        return NextResponse.json(setResponse.Attributes, { status: 200 })
     } catch (error) {
         return NextResponse.json({ error: error.message }, { status: 500 })
     }
