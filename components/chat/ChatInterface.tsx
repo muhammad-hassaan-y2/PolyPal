@@ -40,6 +40,7 @@ interface Message {
 interface ChatInterfaceProps {
     topic: string;
     language: string;
+    onReward: (messageCount: boolean) => void;
     passedPoints: number;
     setPassedPoints: (points: number) => void; // Explicitly define the function type
 }
@@ -118,6 +119,7 @@ const splitMessage = (message: string, maxLength: number = 150): string[] => {
     return bubbles;
 };
 
+
 const fetchUserSession = async() => {
     try {
         const res = await fetch('/api/get-session', {
@@ -132,14 +134,14 @@ const fetchUserSession = async() => {
     }
 }
 
-export const ChatInterface: React.FC<ChatInterfaceProps> = ({ topic, language, passedPoints, setPassedPoints }) => {
+export const ChatInterface: React.FC<ChatInterfaceProps> = ({ topic, language, onReward, passedPoints, setPassedPoints }) => {
     const [messages, setMessages] = useState<Message[]>([])
     const [input, setInput] = useState('')
     const [isLoading, setIsLoading] = useState(false)
-    const [userMessageCount, setUserMessageCount] = useState(0);
+    const [userMessageCount, setUserMessageCount] = useState(1);
     const [userSession, setUserSession] = useState(false)
-
     const messagesPerReward = 10;
+    
 
     useEffect(() => {
         async function getUserSession() {
@@ -226,13 +228,16 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ topic, language, p
 
         setUserMessageCount(userMessageCount + 1)
         try {
-            if (userSession && (userMessageCount % messagesPerReward) == 9) {
+            console.log("User M Count: ", userMessageCount)
+            if (userSession && (userMessageCount % messagesPerReward) == 0) {
+                // console.log("Reward...");
+                onReward(true);
                 const response = await fetch('/api/db/userProgress/points', {
                     method: 'PATCH',
                 });
 
-                const newPoints = +(passedPoints) + 10
-                setPassedPoints(newPoints)
+                const newPoints = +(passedPoints) + 10;
+                setPassedPoints(newPoints);
             }
         }
         catch (error) {
@@ -252,7 +257,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ topic, language, p
 
     const playWithVoice = async ( message: string ) => {
         if (!message) {
-            console.log('No message')
+            console.log('No message');
             setIsSpeaking(false);
             return;
         }
