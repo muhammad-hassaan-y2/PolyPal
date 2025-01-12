@@ -10,6 +10,19 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Eye, EyeOff } from 'lucide-react'
 import { login } from '@/action/auth'
 import { ErrorModal } from "@/components/error-modal"
+import { Work_Sans, Eczar } from 'next/font/google'
+
+const workSans = Work_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+})
+
+const eczar = Eczar({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+})
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
@@ -34,9 +47,9 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
+    <div className={`min-h-screen flex items-center justify-center bg-[#FFFBE8] ${workSans.className}`}>
       <div className="w-full max-w-md p-8 space-y-8 bg-card rounded-xl shadow-lg">
-        <h2 className="text-3xl font-bold text-center">Login to Polypal</h2>
+        <h2 className={`text-3xl font-bold text-center ${eczar.className}`}>Login to Polypal</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <Label htmlFor="username">Username</Label>
@@ -85,7 +98,7 @@ export default function LoginPage() {
         <div className="text-center space-y-2">
           <Link href="/forgot-password" className="text-sm text-primary hover:underline">Forgot password?</Link>
           <div className="text-sm">
-            Don&apos;t have an account? <Link href="/register" className="text-primary hover:underline">Sign up</Link>
+            Don&apos;t have an account? <Link href="/register" className="text-primary hover:underline"><strong>Sign up</strong></Link>
           </div>
         </div>
       </div>

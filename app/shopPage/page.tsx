@@ -12,7 +12,7 @@ const ShopPage = () => {
     return (
         <div>
             <Navbar passedPoints={pointsToPass} setPassedPoints={setPointsToPass} disablePoints={false}/>
-            <div className="flex h-screen">
+            <div className="flex h-screen bg-[#FFFBE8]">
                 <ProfileContainer setProfileData={setProfileData} profileData={profileData}/>
                 <div className="w-1/2">
                     <ShopContainer passedPoints={pointsToPass} setPassedPoints={setPointsToPass} setProfileData={setProfileData} />

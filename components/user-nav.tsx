@@ -39,22 +39,12 @@ export function UserNav() {
           return;
         }
 
-        const sessionData = await response.json();
+        const userData = await response.json();
 
-        if (sessionData.userId) {
-          const userResponse = await fetch(`/api/db/get-user?userId=${sessionData.userId}`, {
-            method: 'GET',
-            credentials: 'include',
-          });
-
-          if (userResponse.ok) {
-            const userData = await userResponse.json();
-            setUser(userData);
-          } else {
-            console.error('Failed to fetch user details');
-          }
+        if (userData.userId) {
+          setUser(userData);
         } else {
-          console.log('Session data does not contain userId');
+          console.error('Session data does not contain userId');
         }
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -110,7 +100,7 @@ export function UserNav() {
               {user.firstName} {user.lastName}
             </p>
             <p className="text-xs leading-none text-muted-foreground">
-              {user.username}
+              @{user.username}
             </p>
           </div>
         </DropdownMenuLabel>
