@@ -5,6 +5,13 @@
 import { useEffect, useState } from 'react';
 import { Card, CardTitle, CardHeader, CardDescription, CardImage } from "@/components/ui/card";
 import { Button } from '../ui/button';
+import { Eczar, Work_Sans } from 'next/font/google'
+
+const eczar = Eczar({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+})
 
 interface ShopItem {
     itemId: number;
@@ -133,21 +140,23 @@ export default function ShopContainer({passedPoints=0, setPassedPoints = (num : 
 
     return (
         <div>
-            <h1>Shop Items</h1>
-            <Button onClick={() => filterByItemType("all")}>All</Button>
-            <Button onClick={() => filterByItemType("hats")}>Hats</Button>
-            <Button onClick={() => filterByItemType("glasses")}>Glasses</Button>
-            <Button onClick={() => filterByItemType("collars")}>Collars</Button>
-            <Button onClick={() => filterByItemType("avatar")}>Avatar</Button>
+        <h1 className={`text-5xl text-center mb-6 text-[#2D2D2D] font-semibold ${eczar.className}`}> Shop Items </h1>
+            <div className="flex justify-center mb-4">
+                <Button onClick={() => filterByItemType("all")} className="mr-2 py-3 px-6 text-lg font-semibold">All</Button>
+                <Button onClick={() => filterByItemType("hats")} className="mr-2 py-3 px-6 text-lg font-semibold">Hats</Button>
+                <Button onClick={() => filterByItemType("glasses")} className="mr-2 py-3 px-6 text-lg font-semibold">Glasses</Button>
+                <Button onClick={() => filterByItemType("collars")} className="mr-2 py-3 px-6 text-lg font-semibold">Collars</Button>
+                <Button onClick={() => filterByItemType("avatar")} className="py-3 px-6 text-lg font-semibold">Avatar</Button>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredShopItems.map((item, index) => (
                     <Card key={index} className="m-4" style={{ backgroundColor: item.equipped ? "rgb(255 251 232 / var(--tw-bg-opacity, 1))" : "white"}}>
                         <div className="w-1/3 mx-auto">
                             <CardImage src={item.imageUrl} alt={item.name} width={100} height={100} />
                         </div>
-                        <CardHeader>
-                            <CardTitle>{item.name}</CardTitle>
-                            <CardDescription>Price: ${item.price}</CardDescription>
+                        <CardHeader className="text-center">
+                            <CardTitle className="text-center"> {item.name} </CardTitle>
+                            <CardDescription className="text-center"> Price: ${item.price} </CardDescription>
                             <div>
                                 {userSession?  
                                     (item.owned ?
