@@ -21,7 +21,7 @@ export default function AboutPage() {
     <div className="min-h-screen bg-[#FFFBE8] overflow-hidden">
       <Navbar />
       <BouncingCats catCount={catCount} />
-      <main className="relative z-20 flex flex-col items-center justify-center min-h-[calc(100vh-80px)] -mt-16">
+      <main className="relative z-20 flex flex-col items-center justify-center min-h-[calc(100vh-80px)]">
         <div className="w-full max-w-2xl bg-transparent rounded-[25px] p-8 shadow-sm border border-black/50">
           <h1 className={`text-5xl text-center mb-6 text-[#2D2D2D] font-semibold ${eczar.className}`}>
             polypal

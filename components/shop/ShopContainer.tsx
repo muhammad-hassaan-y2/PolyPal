@@ -1,8 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useEffect, useState } from 'react';
-
 import { Card, CardTitle, CardHeader, CardDescription, CardImage } from "@/components/ui/card";
 import { Button } from '../ui/button';
 import { Eczar, Work_Sans } from 'next/font/google'
@@ -22,6 +22,20 @@ interface ShopItem {
     s3Key: string;
     equipped: boolean;
     owned: boolean;
+}
+
+const fetchUserSession = async() => {
+    try {
+        const res = await fetch('/api/get-session', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        return (await res.json()).userId
+    } catch (err) {
+        return false;
+    }
 }
 
 const fetchShopItems = async () => {
@@ -45,6 +59,7 @@ const fetchShopItems = async () => {
         }));
     } catch (error) {
         console.error("Error loading shop items", error)
+        return []
     }
 }
 
@@ -76,17 +91,21 @@ const equipItem = async (item: ShopItem) => {
     }
 }
 
-export default function ShopContainer() {
+export default function ShopContainer({passedPoints=0, setPassedPoints = (num : number)=>{}}) {
     const [shopItems, setShopItems] = useState<ShopItem[]>([]);
     const [filteredShopItems, setFilteredShopItems] = useState<ShopItem[]>([]);
+    const [userSession, setUserSession] = useState(false)
 
     useEffect(() => {
-        async function getShopItems() {
+        async function setupShop() {
+            const fetchedSession = await fetchUserSession();
+            setUserSession(fetchedSession)
+
             const data = await fetchShopItems();
             setShopItems(data);
             setFilteredShopItems(data);
         }
-        getShopItems();
+        setupShop();
     }, []);
 
     const filterByItemType = (type: string) => {
@@ -105,6 +124,7 @@ export default function ShopContainer() {
         boughtItem.owned = true
         filteredShopItems[index] = boughtItem
 
+        setPassedPoints(passedPoints - boughtItem.price)
         setFilteredShopItems(filteredShopItems.slice())
     }
 
@@ -137,11 +157,15 @@ export default function ShopContainer() {
                         <CardHeader className="text-center">
                             <CardTitle className="text-center"> {item.name} </CardTitle>
                             <CardDescription className="text-center"> Price: ${item.price} </CardDescription>
-                            {item.owned ?
-                                (<Button onClick={() => {handleEquipItem(index)}}> {item.equipped? "Unequip" : "Equip" + " Item"}</Button>)
-                                :
-                                (<Button style={{backgroundColor: "#e25237"}} onClick={() => handleBuyItem(index)}>Buy Item</Button>)
-                            }
+                            <div>
+                                {userSession?  
+                                    (item.owned ?
+                                        (<Button onClick={() => {handleEquipItem(index)}}> {item.equipped? "Unequip" : "Equip" + " Item"}</Button>)
+                                        :
+                                        (<Button style={{backgroundColor: "#e25237"}} onClick={() => handleBuyItem(index)}>Buy Item</Button>)
+                                    )  
+                                    : "" }
+                            </div>
                         </CardHeader>
                     </Card>
                 ))}

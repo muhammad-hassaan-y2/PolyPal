@@ -2,9 +2,10 @@
 import Link from "next/link"
 import Navbar from "@/components/Navbar"
 import catWaveAnimation from "@/public/catWave.json"
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Eczar, Work_Sans } from 'next/font/google'
 import dynamic from 'next/dynamic'
+
 // Dynamically import lottie-react to avoid document is not defined
 const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
 
@@ -23,6 +24,24 @@ const workSans = Work_Sans({
 export default function WelcomePage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const lottieRef = useRef<any>(null);
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  // instead of fetching maybe theres a quicker way?
+  useEffect(() => {
+    const fetchUser = async () => {
+        const response = await fetch(`/api/get-session`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        const data = await response.json();
+        if (data.userId) {
+            setLoggedIn(true);
+        }
+    };
+    fetchUser();
+}, []);
 
   useEffect(() => {
     // Play meow sound when component mounts
@@ -74,7 +93,7 @@ export default function WelcomePage() {
   return (
     <div className="min-h-screen bg-[#FFFBE8]">
       <Navbar />
-      <main className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] -mt-16">
+      <main className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)]">
         <h1 className={`text-7xl mb-4 text-[#2D2D2D] font-semibold ${eczar.className}`}>
           polypal
         </h1>
@@ -85,6 +104,18 @@ export default function WelcomePage() {
             animationData={catWaveAnimation}
             loop={false}
             className="w-full h-full"
+            onMouseEnter={() => {
+            if (lottieRef.current) {
+                lottieRef.current.setDirection(1);
+                lottieRef.current.play();
+              }
+            }}
+            onMouseLeave={() => {
+              if (lottieRef.current) {
+                lottieRef.current.setDirection(-1);
+                lottieRef.current.play();
+              }
+            }}
           />
         </div>
 
@@ -93,19 +124,31 @@ export default function WelcomePage() {
         </p>
 
         <div className={`flex flex-col gap-4 items-center ${workSans.className}`}>
-          <Link 
-            href="/languages"
-            className="px-8 py-3 bg-[#FF9000] text-white rounded-full font-medium text-3xl hover:bg-[#FF9000]/90 transition-colors"
-          >
-            start playing for free!
-          </Link>
-          
-          <Link 
-            href="/login"
-            className="text-[#FF9000] hover:underline text-2xl"
-          >
-            I already have an account
-          </Link>
+            {loggedIn ? (
+              <Link 
+                href="/languages"
+                className="px-8 py-3 bg-[#FF9000] text-white rounded-full font-medium text-3xl hover:bg-[#FF9000]/90 transition-colors"
+              >
+                Play Now!
+              </Link>
+            ) : (
+              <div className="flex flex-col items-center gap-4">
+                <Link 
+                  href="/languages"
+                  className="px-8 py-3 bg-[#FF9000] text-white rounded-full font-medium text-3xl hover:bg-[#FF9000]/90 transition-colors"
+                >
+                  Start playing for free!
+                </Link>
+                
+                <Link 
+                  href="/login"
+                  className="text-[#FF9000] hover:underline text-2xl"
+                >
+                  I already have an account
+                </Link>
+              </div>
+            )}
+            
         </div>
       </main>
     </div>

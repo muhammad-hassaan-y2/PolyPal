@@ -55,6 +55,7 @@ export default function RegisterPage() {
         setIsErrorModalOpen(true)
       }
     } catch (err) {
+      console.error('Registration error:', err) // Log the error for debugging
       setErrorMessage('An unexpected error occurred. Please try again.')
       setIsErrorModalOpen(true)
     }
@@ -136,4 +137,3 @@ export default function RegisterPage() {
     </div>
   )
 }
-

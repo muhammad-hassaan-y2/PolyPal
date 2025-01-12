@@ -21,12 +21,13 @@ export async function GET() {
     const tableName = "UserProgress"
 
     const userId = (await cookies()).get('userId')?.value;
-    console.log('userId', userId);
+    if (!userId) {
+        return NextResponse.json({ message: 'User is not logged in' }, { status: 200 });
+    }
     
     try {
         const getUserInventory = new GetItemCommand({
             TableName: tableName,
-            // TODO: repl w signed in user later
             Key: { "userId": { "S": userId } }
         })
 
@@ -69,9 +70,9 @@ export async function GET() {
                
             }
         }
-        return NextResponse.json(clothesImagesMap, { status: 200 });
+        return NextResponse.json({ success: true, clothesImagesMap }, { status: 200 });
     } catch (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
 }
 

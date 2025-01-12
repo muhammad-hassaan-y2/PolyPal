@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -7,7 +8,7 @@ import { MessageInput } from './message-input'
 import Image from 'next/image'
 import catSleepAnimation from "@/public/catSleep.json"
 import dynamic from 'next/dynamic'
-// Dynamically import lottie-react to avoid document is not defined
+
 const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
 
 const voiceCharacters: { [key: string]: string } = {
@@ -39,6 +40,9 @@ interface Message {
 interface ChatInterfaceProps {
     topic: string;
     language: string;
+    onReward: (messageCount: boolean) => void;
+    passedPoints: number;
+    setPassedPoints: (points: number) => void; // Explicitly define the function type
 }
 
 const splitMessage = (message: string, maxLength: number = 150): string[] => {
@@ -115,12 +119,37 @@ const splitMessage = (message: string, maxLength: number = 150): string[] => {
     return bubbles;
 };
 
-export const ChatInterface: React.FC<ChatInterfaceProps> = ({ topic, language }) => {
+
+const fetchUserSession = async() => {
+    try {
+        const res = await fetch('/api/get-session', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        return (await res.json()).userId
+    } catch (err) {
+        return false;
+    }
+}
+
+export const ChatInterface: React.FC<ChatInterfaceProps> = ({ topic, language, onReward, passedPoints, setPassedPoints }) => {
     const [messages, setMessages] = useState<Message[]>([])
     const [input, setInput] = useState('')
     const [isLoading, setIsLoading] = useState(false)
-    const [userMessageCount] = useState(0);
+    const [userMessageCount, setUserMessageCount] = useState(1);
+    const [userSession, setUserSession] = useState(false)
     const messagesPerReward = 10;
+    
+
+    useEffect(() => {
+        async function getUserSession() {
+            const fetchedSession = await fetchUserSession();
+            setUserSession(fetchedSession)
+        }
+        getUserSession();
+    }, []);
 
     useEffect(() => {
         setMessages([])
@@ -197,12 +226,18 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ topic, language })
             setIsLoading(false)
         }
 
+        setUserMessageCount(userMessageCount + 1)
         try {
-            if ((userMessageCount % messagesPerReward) == 0) {
-                // const response = await fetch('/api/db/userProgress/points', {
-                //     method: 'PATCH',
-                //     body: JSON.stringify({ userId: 1, quantity: 10 }),
-                // });
+            console.log("User M Count: ", userMessageCount)
+            if (userSession && (userMessageCount % messagesPerReward) == 0) {
+                // console.log("Reward...");
+                onReward(true);
+                const response = await fetch('/api/db/userProgress/points', {
+                    method: 'PATCH',
+                });
+
+                const newPoints = +(passedPoints) + 10;
+                setPassedPoints(newPoints);
             }
         }
         catch (error) {
@@ -216,56 +251,60 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ topic, language })
         }
     }
 
-        //text to speech starts
-        const [isSpeaking, setIsSpeaking] = useState(false);
-        const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(null);
+    //text to speech starts
+    const [isSpeaking, setIsSpeaking] = useState(false);
+    const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(null);
 
-        const playWithVoice = async ( message: string ) => {
-            if (!message) {
-                return;
+    const playWithVoice = async ( message: string ) => {
+        if (!message) {
+            console.log('No message');
+            setIsSpeaking(false);
+            return;
+        }
+        
+        if (isSpeaking === true) {
+            if (currentAudio) {
+                //reset the audio back to the beginning
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
             }
-            
-            if (isSpeaking === true) {
-                if (currentAudio) {
-                    //reset the audio back to the beginning
-                    currentAudio.pause();
-                    currentAudio.currentTime = 0;
-                }
-                setCurrentAudio(null);
-                return;
-            }
+            setCurrentAudio(null);
+            setIsSpeaking(false);
+            return;
+        }
 
-            const voiceId = voiceCharacters[language]
-            try {
-                const response = await fetch('/api/polly', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ 
-                        text: message,
-                        voiceId: voiceId
-                    }),
-                });
-                if (!response.ok) {
-                    throw new Error('Speech synthesis failed');
-                }
-                const audioBlob = await response.blob();
-                const audio = new Audio(URL.createObjectURL(audioBlob));
-    
-                audio.onended = () => {
-                    URL.revokeObjectURL(audio.src);
-                    setCurrentAudio(null);
-                };
-                setCurrentAudio(audio);
-                await audio.play();
-    
-            } catch (error) {
-                console.error('Error:', error);
-                setCurrentAudio(null);
+        const voiceId = voiceCharacters[language]
+        try {
+            const response = await fetch('/api/polly', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 
+                    text: message,
+                    voiceId: voiceId
+                }),
+            });
+            if (!response.ok) {
+                throw new Error('Speech synthesis failed');
             }
-        };
-        //text to speech ends here
+            const audioBlob = await response.blob();
+            const audio = new Audio(URL.createObjectURL(audioBlob));
+
+            audio.onended = () => {
+                URL.revokeObjectURL(audio.src);
+                setCurrentAudio(null);
+                setIsSpeaking(false);
+            };
+            setCurrentAudio(audio);
+            await audio.play();
+
+        } catch (error) {
+            console.error('Error:', error);
+            setCurrentAudio(null);
+        }
+    };
+    //text to speech ends here
 
     const toggleVoice = ( mess : string) => {
         playWithVoice(mess); 
@@ -291,22 +330,23 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ topic, language })
 
             <Card className="flex flex-col h-[calc(100vh-140px)] bg-white/80 backdrop-blur-sm border-[#594F43]">
                 <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                    
                     {messages.map((message) => (
                         <div key={message.id} className="flex items-start gap-1 w-full">
-                            <MessageBubble content={message.content} role={message.role} />
-                            {message.role === 'assistant' && (
-                                <button
-                                    onClick={ () => toggleVoice(message.content)}
-                                    className="flex-shrink-0 -ml-0.5 mt-1"
-                                >
-                                    <Image 
-                                        src={isSpeaking ? "/catMouthOn.png" : "/catMouthOff.png"}
-                                        alt="Voice Toggle" 
-                                        width={40}  
-                                        height={40}
-                                    />
-                                </button>
-                            )}
+                                <MessageBubble content={message.content} role={message.role} onPlayVoice={toggleVoice} />
+                                {message.role === 'assistant' && (
+                                    <button
+                                        onClick={ () => toggleVoice(message.content)}
+                                        className="flex-shrink-0 -ml-0.5 mt-1"
+                                    >
+                                        <Image 
+                                            src={isSpeaking ? "/catMouthOn.png" : "/catMouthOff.png"}
+                                            alt="Voice Toggle" 
+                                            width={40}  
+                                            height={40}
+                                        />
+                                    </button>
+                                )}
                         </div>
                     ))}
                     {isLoading && (
@@ -316,6 +356,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ topic, language })
                             <div className="animate-pulse h-2 w-2 rounded-full bg-[#FF9000] animation-delay-400" />
                         </div>
                     )}
+                    
                 </div>
                 <MessageInput
                     input={input}
