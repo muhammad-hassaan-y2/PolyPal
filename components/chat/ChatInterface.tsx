@@ -229,12 +229,9 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ topic, language, o
         setUserMessageCount(userMessageCount + 1)
         try {
             console.log("User M Count: ", userMessageCount)
-            if ((userMessageCount % messagesPerReward) == 0 && userMessageCount !== 0) {
+            if (userSession && (userMessageCount % messagesPerReward) == 0) {
                 // console.log("Reward...");
                 onReward(true);
-
-            }
-            if (userSession && (userMessageCount % messagesPerReward) == 9) {
                 const response = await fetch('/api/db/userProgress/points', {
                     method: 'PATCH',
                 });
