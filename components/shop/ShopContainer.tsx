@@ -175,38 +175,63 @@ export const ShopContainer: React.FC<ShopContainerProps> = ({ passedPoints, setP
     }
 
     return (
-        <div>
-        <h1 className={`text-5xl text-center mb-6 text-[#2D2D2D] font-semibold ${eczar.className}`}> Shop Items </h1>
-            <div className="flex justify-center mb-4">
-                <Button onClick={() => filterByItemType("all")} className="mr-2 py-3 px-6 text-lg font-semibold">All</Button>
-                <Button onClick={() => filterByItemType("hats")} className="mr-2 py-3 px-6 text-lg font-semibold">Hats</Button>
-                <Button onClick={() => filterByItemType("glasses")} className="mr-2 py-3 px-6 text-lg font-semibold">Glasses</Button>
-                <Button onClick={() => filterByItemType("collars")} className="mr-2 py-3 px-6 text-lg font-semibold">Collars</Button>
-                <Button onClick={() => filterByItemType("avatar")} className="py-3 px-6 text-lg font-semibold">Avatar</Button>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredShopItems.map((item, index) => (
-                    <Card key={index} className="m-4" style={{ backgroundColor: item.equipped ? "rgb(255 251 232 / var(--tw-bg-opacity, 1))" : "white"}}>
-                        <div className="w-1/3 mx-auto">
-                            <CardImage src={item.imageUrl} alt={item.name} width={100} height={100} />
-                        </div>
-                        <CardHeader className="text-center">
-                            <CardTitle className="text-center"> {item.name} </CardTitle>
-                            <CardDescription className="text-center"> Price: ${item.price} </CardDescription>
-                            <div>
-                                {userSession?  
-                                    (item.owned ?
-                                        (<Button onClick={() => {handleEquipItem(index, setProfileData)}}> {item.equipped? "Unequip" : "Equip" + " Item"}</Button>)
-                                        :
-                                        (<Button style={{backgroundColor: "#e25237"}} onClick={() => handleBuyItem(index)}>Buy Item</Button>)
-                                    )  
-                                    : "" }
-                            </div>
-                        </CardHeader>
-                    </Card>
-                ))}
-            </div>
+<div>
+    <h1 className={`text-4xl text-center mb-6 text-[#2D2D2D] font-semibold ${eczar.className}`}>
+        Shop Items
+    </h1>
+    <div className="flex justify-center mb-4 flex-wrap gap-2">
+        <Button onClick={() => filterByItemType("all")} className="py-2 px-4 text-sm md:py-3 md:px-6 md:text-lg font-semibold">All</Button>
+        <Button onClick={() => filterByItemType("hats")} className="py-2 px-4 text-sm md:py-3 md:px-6 md:text-lg font-semibold">Hats</Button>
+        <Button onClick={() => filterByItemType("glasses")} className="py-2 px-4 text-sm md:py-3 md:px-6 md:text-lg font-semibold">Glasses</Button>
+        <Button onClick={() => filterByItemType("collars")} className="py-2 px-4 text-sm md:py-3 md:px-6 md:text-lg font-semibold">Collars</Button>
+        <Button onClick={() => filterByItemType("avatar")} className="py-2 px-4 text-sm md:py-3 md:px-6 md:text-lg font-semibold">Avatar</Button>
+    </div>
 
+    {/* Scrollable vertical container */}
+    <div
+        className="overflow-y-auto px-2 py-4 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200"
+        style={{
+            height: "calc(100vh - 240px)", // Adjust height dynamically
+        }}
+    >
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredShopItems.map((item, index) => (
+                <Card
+                    key={index}
+                    className="p-4"
+                    style={{
+                        backgroundColor: item.equipped ? "rgb(255 251 232)" : "white",
+                    }}
+                >
+                    <div className="w-3/4 mx-auto mb-4">
+                        <CardImage src={item.imageUrl} alt={item.name} width={100} height={100} />
+                    </div>
+                    <CardHeader className="text-center">
+                        <CardTitle> {item.name} </CardTitle>
+                        <CardDescription> Price: ${item.price} </CardDescription>
+                        <div className="mt-4">
+                            {userSession ? (
+                                item.owned ? (
+                                    <Button onClick={() => handleEquipItem(index, setProfileData)}>
+                                        {item.equipped ? "Unequip" : "Equip"} Item
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        style={{ backgroundColor: "#e25237" }}
+                                        onClick={() => handleBuyItem(index)}
+                                    >
+                                        Buy Item
+                                    </Button>
+                                )
+                            ) : null}
+                        </div>
+                    </CardHeader>
+                </Card>
+            ))}
         </div>
+    </div>
+</div>
+
+
     )
 }
