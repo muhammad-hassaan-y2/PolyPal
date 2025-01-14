@@ -31,11 +31,11 @@ export default function AboutPage() {
             <br /><br />
             <strong>Interactive Learning:</strong> Practice real conversations with an AI that adapts to your language level and keeps things fresh.
             <br /><br />
-            <strong>Multilingual Mastery:</strong> From Spanish to Japanese, explore a variety of languages while being gently corrected and guided.
+            <strong>Multilingual Mastery:</strong> From Spanish to Chinese, explore a variety of languages while being gently corrected and guided.
             <br /><br />
             <strong>Cat Personality:</strong> Enjoy witty, pesky humor that makes every chat a delight.
             <br /><br />
-            So grab your pillow and dive in—because learning is always purr-fect with a cat by your side! 🧊❄️
+            So grab your pillow and dive in:because learning is always purr-fect with a cat by your side! 🧊❄️
           </p>
           <button
             onClick={handleAddCat}
