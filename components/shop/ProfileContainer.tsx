@@ -55,9 +55,18 @@ export const ProfileContainer: React.FC<ProfileContainerProps> = ({ profileData,
     }, [profileData]);
 
     return (
-        <div className="w-1/2 flex items-center justify-center">
+        <div className="relative w-1/2 flex items-center justify-center">
+            <div className="absolute inset-0">
+                <Image
+                    src="/petShop.png"
+                    alt="Pet Shop Background"
+                    layout="fill"
+                    objectFit="contain"
+                    className="z-0 transform -translate-y-40"
+                />
+            </div>
             {hasProfile === false ? (
-                <div className="text-center text-red-500">
+                <div className="text-center text-red-500 z-10">
                     <p>No profile or fetching profile</p>
                 </div>
             ) : (
@@ -76,6 +85,7 @@ export const ProfileContainer: React.FC<ProfileContainerProps> = ({ profileData,
                 <div 
                     id="avatar"
                     style={{
+                        backgroundColor: 'white',
                         width: "100%",
                         height: "100%",
                         borderRadius: "50%",
