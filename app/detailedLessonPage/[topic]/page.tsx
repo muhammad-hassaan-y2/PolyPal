@@ -13,12 +13,6 @@ const eczar = Eczar({
   display: 'swap',
 })
 
-// const workSans = Work_Sans({
-//   subsets: ['latin'],
-//   weight: ['400', '500', '600', '700'],
-//   display: 'swap',
-// })
-
 // Placeholder messages
 const congratMessages = [
     "🐾 Purrfect! You're pawsitively amazing—keep up the claw-some work! 😻",
@@ -108,8 +102,8 @@ export default function DetailedLessonPage() {
     return (
         <div className="min-h-screen flex flex-col bg-[#FFFBE8]">
             <Navbar passedPoints={pointsToPass} setPassedPoints={setPointsToPass} disablePoints={false}/>
-            <div className="flex-grow flex justify-center px-4 py-6">
-                <div className="w-full max-w-4xl">
+            <div className="flex-grow flex flex-col justify-center px-4 py-6">
+                <div className="w-full max-w-4xl mx-auto">
                     <h1 className={`text-3xl font-bold text-[#2D2D2D] mb-6 text-center ${eczar.className}`}>
                         {topic}
                     </h1>
@@ -131,6 +125,12 @@ export default function DetailedLessonPage() {
                             <strong>Listen to Cat Purring while Studying </strong>
                         </p>
                     </div>
+                    <div className="text-center text-sm text-gray-600 mb-2 font-bold">
+                        Click on words or phrases to see their pronunciation
+                    </div>
+                    <div className="text-center text-sm text-gray-600 mb-10 font-bold">
+                        Earn points for every 10 messages! Happy Playing~
+                    </div>
                     <ChatInterface 
                     topic={topic} 
                     language={language} 
@@ -147,7 +147,7 @@ export default function DetailedLessonPage() {
                 topic={topic}
                 language={language}
             />
-
+            
             {notification && (
                 <div className="fixed bottom-4 right-4 z-50 animate-slide-in">
                     <div className="bg-white/90 backdrop-blur-sm border-2 border-[#FF9000] 
