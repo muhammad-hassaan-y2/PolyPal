@@ -102,21 +102,22 @@ export const ProfileContainer: React.FC<ProfileContainerProps> = ({ profileData,
                     />
                 </div>
 
-                {/* Accessories */}
+                {/* Accessories (play around with positioning) */}
                 {Object.entries(profileImages).map(([type, imageUrl]) => (
                     <div
                         key={type}
                         className={type}
                         style={{
                             position: 'absolute',
-                            top: type === 'hats' ? '60%' : type === 'glasses' ? '70%' : type === 'collars' ? '105%' : '80%',
+                            top: type === 'hats' ? '30%' : type === 'glasses' ? '70%' : type === 'collars' ? '105%' : '80%',
                             left: '83%',
-                            transform: 'translate(-50%, -50%)',
+                            transform: type === 'hats' ? 'translate(-50%, -22%)' : type === 'glasses' ? 'translate(-61%, -50%)' : 'translate(-50%, -50%)',
                             width: '100%',
                             height: '100%',
                         }}
                     >
-                        <Image src={imageUrl} alt={`${type}`} width={100} height={100} />
+                        {/*glasses should be bigger*/}
+                        <Image src={imageUrl} alt={`${type}`} width={type === 'glasses' ? 170 : 100} height={type === 'glasses' ? 170 : 100} />
                     </div>
                 ))}
             </div>
