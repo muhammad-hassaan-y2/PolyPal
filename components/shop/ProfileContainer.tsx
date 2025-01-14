@@ -56,7 +56,7 @@ export const ProfileContainer: React.FC<ProfileContainerProps> = ({ profileData,
 
     return (
         <div className="relative w-1/2 flex items-center justify-center">
-            <div className="absolute inset-0">
+            <div className="absolute inset-0 opacity-70">
                 <Image
                     src="/petShop.png"
                     alt="Pet Shop Background"
