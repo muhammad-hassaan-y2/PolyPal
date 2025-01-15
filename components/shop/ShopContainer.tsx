@@ -116,6 +116,8 @@ const fetchProfileImages = async () => {
     }
 }
 
+
+
 export const ShopContainer: React.FC<ShopContainerProps> = ({ passedPoints, setPassedPoints, setProfileData}) => {
     const [shopItems, setShopItems] = useState<ShopItem[]>([]);
     const [filteredShopItems, setFilteredShopItems] = useState<ShopItem[]>([]);
