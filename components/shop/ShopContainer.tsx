@@ -210,7 +210,7 @@ export const ShopContainer: React.FC<ShopContainerProps> = ({ passedPoints, setP
                     </div>
                     <CardHeader className="text-center">
                         <CardTitle> {item.name} </CardTitle>
-                        <CardDescription> Price: ${item.price} </CardDescription>
+                        <CardDescription> Price: {item.price} pts </CardDescription>
                         <div className="mt-4">
                             {userSession ? (
                                 item.owned ? (

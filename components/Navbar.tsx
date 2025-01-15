@@ -93,7 +93,7 @@ export default function Navbar({ passedPoints = -1, setPassedPoints = (num: numb
         ))}
         <span
           className="px-4 py-2 font-bold hover:scale-110 transition-transform text-black justify-left">
-          {(userSession && !disablePoints) ? "Points:" + ((passedPoints == -1) ? localPoints : passedPoints) : ""}
+          {(userSession && !disablePoints) ? "Points: " + ((passedPoints == -1) ? localPoints : passedPoints) : ""}
         </span>
       </div>
       <div className="flex items-center">
